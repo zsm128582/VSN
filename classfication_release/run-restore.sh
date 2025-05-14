@@ -1,0 +1,1 @@
+torchrun --nproc_per_node=2  main.py --warmup-epochs 5 --model Restormer  --data-path /data2/ImageNet1k/data/ --num_workers 16  --batch-size 72  --drop-path 0.05  --epoch 300 --dist-eval  --output_dir restore-save > restore.run.txt 

@@ -1,0 +1,102 @@
+#include <cuda_runtime.h>
+#include <cuda_fp16.h> // 可选支持半精度
+#include <assert.h>
+#include <torch/extension.h>
+using std::min;
+// 错误检查宏
+#define CUDA_CHECK(call) do { \
+    cudaError_t err = call; \
+    if (err != cudaSuccess) { \
+        fprintf(stderr, "CUDA error in %s at line %d: %s\n", \
+                __FILE__, __LINE__, cudaGetErrorString(err)); \
+        exit(EXIT_FAILURE); \
+    } \
+} while(0)
+
+template <typename T>
+__global__ void sparse_attention_weighting_kernel(
+    const T* __restrict__ atten,      // [B, H, R, W2, K, W2]
+    const T* __restrict__ value,      // [B, H, R, W2, C]
+    const int64_t* __restrict__ idx,      // [B, H, R, K]
+    T* __restrict__ out,              // [B, H, R, W2, C]
+    const int B, const int H, const int R, 
+    const int W2, const int K, const int C)
+{
+    int b = blockIdx.x;               // batch
+    int h = blockIdx.y;               // head
+    int r = blockIdx.z;               // region
+    int i = threadIdx.x / 32;         // W2 中的像素索引
+    int c_local = threadIdx.x % 32;   // C_block 中的局部通道索引
+
+    if (b >= B || h >= H || r >= R || i >= W2) return;
+
+    // 计算全局索引
+    int atten_base = b * H * R * W2 * K * W2 + h * R * W2 * K * W2 + r * W2 * K * W2 + i * K * W2;
+    int value_base = b * H * R * W2 * C + h * R * W2 * C;
+    int idx_base = b * H * R * K + h * R * K + r * K;
+    int out_idx = b * H * R * W2 * C + h * R * W2 * C + r * W2 * C + i * C;
+
+    // 共享内存
+    extern __shared__ float s_data[];
+    T* s_atten = (T*)s_data;          // [K, W2]
+
+    // 加载 atten 到共享内存
+    for (int k = threadIdx.x; k < K * W2; k += blockDim.x) {
+        s_atten[k] = atten[atten_base + k];
+    }
+    __syncthreads();
+
+    // 分块处理 C
+    const int C_block = 16; // 减小到 16
+    for (int c_base = 0; c_base < C; c_base += C_block) {
+        int c = c_base + c_local;
+        if (c < C) {
+            T sum = 0.0f;
+            for (int j = 0; j < K; j++) {
+                int r_idx = idx[idx_base + j];
+                for (int l = 0; l < W2; l++) {
+                    T att = s_atten[j * W2 + l];
+                    T val = value[value_base + r_idx * W2 * C + l * C + c];
+                    sum += att * val;
+                }
+            }
+            out[out_idx + c] = sum;
+        }
+    }
+}
+
+torch::Tensor weighting_forward(
+    torch::Tensor attn,  // [B, H, R, W2, K , W2 ]
+    torch::Tensor value,    // [B, H, R, W2, C]
+    torch::Tensor idx,    // [B, H, R, K]
+    float scale
+)
+{
+    const int B = value.size(0);
+    const int heads = value.size(1);
+    const int region = value.size(2);
+    const int W2 = value.size(3);
+    const int C = value.size(4);
+    const int K = idx.size(3);
+    auto out = torch::zeros({B, heads, region, W2, C}, value.options());
+
+    // 设置网格和块大小
+    dim3 grid(B, heads , region);
+    int threads_per_block = min(1024, W2 * 32); // 假设每个 W2 分配 32 个线程处理 C
+    
+
+    AT_DISPATCH_FLOATING_TYPES(value.scalar_type(), "weighting_forward_cuda", ([&] {
+        int shared_mem_size = (K * W2) * sizeof(scalar_t);// atten + value 分块
+
+        sparse_attention_weighting_kernel<scalar_t><<<grid, threads_per_block, shared_mem_size>>>(
+            attn.data_ptr<scalar_t>(), 
+            value.data_ptr<scalar_t>(), 
+            idx.data_ptr<int64_t>(), 
+            out.data_ptr<scalar_t>(), 
+            B , heads , region , W2 , K , C
+        );
+    }));
+
+    cudaDeviceSynchronize();
+    return out;
+}

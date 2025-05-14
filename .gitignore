@@ -1,0 +1,6 @@
+.vscode
+*.pth
+__pycache__
+build
+*.egg-info
+*.so

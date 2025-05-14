@@ -1,0 +1,1534 @@
+| distributed init (rank 0): env://
+| distributed init (rank 1): env://
+Namespace(early_conv=False, conv_pos=False, use_ortho=False, batch_size=64, epochs=300, model='Utentive', input_size=224, drop=0.0, drop_path=0.05, model_ema=True, model_ema_decay=0.99996, model_ema_force_cpu=False, opt='adamw', opt_eps=1e-08, opt_betas=None, clip_grad=None, momentum=0.9, weight_decay=0.05, sched='cosine', lr=0.0005, lr_noise=None, lr_noise_pct=0.67, lr_noise_std=1.0, warmup_lr=1e-06, min_lr=1e-05, decay_epochs=30, warmup_epochs=5, cooldown_epochs=10, patience_epochs=10, decay_rate=0.1, color_jitter=0.4, aa='rand-m9-mstd0.5-inc1', smoothing=0.1, train_interpolation='bicubic', repeated_aug=True, reprob=0.25, remode='pixel', recount=1, resplit=False, mixup=0.8, cutmix=1.0, cutmix_minmax=None, mixup_prob=1.0, mixup_switch_prob=0.5, mixup_mode='batch', teacher_model='regnety_160', teacher_path='', distillation_type='none', distillation_alpha=0.5, distillation_tau=1.0, finetune='', data_path='/data2/ImageNet1k/data/', data_set='IMNET', inat_category='name', output_dir='save', device='cuda', seed=0, resume='', start_epoch=0, eval=False, dist_eval=True, num_workers=16, pin_mem=True, world_size=2, dist_url='env://', rank=0, gpu=0, distributed=True, dist_backend='nccl')
+Creating model: Utentive
+Utentive(
+  (patch_embed): PatchEmbed(
+    (proj): Sequential(
+      (0): Conv2d(3, 32, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+      (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): GELU(approximate='none')
+      (3): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (4): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (5): GELU(approximate='none')
+      (6): Conv2d(32, 64, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+      (7): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (8): GELU(approximate='none')
+      (9): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (10): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+  )
+  (encoder_level1): uLayer(
+    (Relpos): RetNetRelPos2d()
+    (blocks): ModuleList(
+      (0-1): 2 x RetBlock(
+        (retention_layer_norm): LayerNorm((64,), eps=1e-06, elementwise_affine=True)
+        (retention): VisionRetentionChunk(
+          (q_proj): Linear(in_features=64, out_features=64, bias=True)
+          (k_proj): Linear(in_features=64, out_features=64, bias=True)
+          (v_proj): Linear(in_features=64, out_features=64, bias=True)
+          (lepe): DWConv2d(
+            (conv): Conv2d(64, 64, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=64)
+          )
+          (out_proj): Linear(in_features=64, out_features=64, bias=True)
+        )
+        (drop_path): DropPath(drop_prob=0.000)
+        (final_layer_norm): LayerNorm((64,), eps=1e-06, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (activation_dropout_module): Dropout(p=0.0, inplace=False)
+          (dropout_module): Dropout(p=0.0, inplace=False)
+          (fc1): Linear(in_features=64, out_features=192, bias=True)
+          (fc2): Linear(in_features=192, out_features=64, bias=True)
+          (dwconv): DWConv2d(
+            (conv): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=192)
+          )
+        )
+        (pos): DWConv2d(
+          (conv): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=64)
+        )
+      )
+    )
+  )
+  (down1_2): Downsample(
+    (body): Sequential(
+      (0): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (1): PixelUnshuffle(downscale_factor=2)
+    )
+  )
+  (encoder_level2): uLayer(
+    (Relpos): RetNetRelPos2d()
+    (blocks): ModuleList(
+      (0-3): 4 x RetBlock(
+        (retention_layer_norm): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+        (retention): VisionRetentionChunk(
+          (q_proj): Linear(in_features=128, out_features=128, bias=True)
+          (k_proj): Linear(in_features=128, out_features=128, bias=True)
+          (v_proj): Linear(in_features=128, out_features=128, bias=True)
+          (lepe): DWConv2d(
+            (conv): Conv2d(128, 128, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=128)
+          )
+          (out_proj): Linear(in_features=128, out_features=128, bias=True)
+        )
+        (drop_path): DropPath(drop_prob=0.000)
+        (final_layer_norm): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (activation_dropout_module): Dropout(p=0.0, inplace=False)
+          (dropout_module): Dropout(p=0.0, inplace=False)
+          (fc1): Linear(in_features=128, out_features=192, bias=True)
+          (fc2): Linear(in_features=192, out_features=128, bias=True)
+          (dwconv): DWConv2d(
+            (conv): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=192)
+          )
+        )
+        (pos): DWConv2d(
+          (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128)
+        )
+      )
+    )
+  )
+  (down2_3): Downsample(
+    (body): Sequential(
+      (0): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (1): PixelUnshuffle(downscale_factor=2)
+    )
+  )
+  (encoder_level3): uLayer(
+    (Relpos): RetNetRelPos2d()
+    (blocks): ModuleList(
+      (0-3): 4 x RetBlock(
+        (retention_layer_norm): LayerNorm((256,), eps=1e-06, elementwise_affine=True)
+        (retention): VisionRetentionChunk(
+          (q_proj): Linear(in_features=256, out_features=256, bias=True)
+          (k_proj): Linear(in_features=256, out_features=256, bias=True)
+          (v_proj): Linear(in_features=256, out_features=256, bias=True)
+          (lepe): DWConv2d(
+            (conv): Conv2d(256, 256, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=256)
+          )
+          (out_proj): Linear(in_features=256, out_features=256, bias=True)
+        )
+        (drop_path): DropPath(drop_prob=0.000)
+        (final_layer_norm): LayerNorm((256,), eps=1e-06, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (activation_dropout_module): Dropout(p=0.0, inplace=False)
+          (dropout_module): Dropout(p=0.0, inplace=False)
+          (fc1): Linear(in_features=256, out_features=192, bias=True)
+          (fc2): Linear(in_features=192, out_features=256, bias=True)
+          (dwconv): DWConv2d(
+            (conv): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=192)
+          )
+        )
+        (pos): DWConv2d(
+          (conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256)
+        )
+      )
+    )
+  )
+  (down3_4): Downsample(
+    (body): Sequential(
+      (0): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (1): PixelUnshuffle(downscale_factor=2)
+    )
+  )
+  (latent): uLayer(
+    (Relpos): RetNetRelPos2d()
+    (blocks): ModuleList(
+      (0-5): 6 x RetBlock(
+        (retention_layer_norm): LayerNorm((512,), eps=1e-06, elementwise_affine=True)
+        (retention): VisionRetentionAll(
+          (q_proj): Linear(in_features=512, out_features=512, bias=True)
+          (k_proj): Linear(in_features=512, out_features=512, bias=True)
+          (v_proj): Linear(in_features=512, out_features=512, bias=True)
+          (lepe): DWConv2d(
+            (conv): Conv2d(512, 512, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=512)
+          )
+          (out_proj): Linear(in_features=512, out_features=512, bias=True)
+        )
+        (drop_path): DropPath(drop_prob=0.000)
+        (final_layer_norm): LayerNorm((512,), eps=1e-06, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (activation_dropout_module): Dropout(p=0.0, inplace=False)
+          (dropout_module): Dropout(p=0.0, inplace=False)
+          (fc1): Linear(in_features=512, out_features=192, bias=True)
+          (fc2): Linear(in_features=192, out_features=512, bias=True)
+          (dwconv): DWConv2d(
+            (conv): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=192)
+          )
+        )
+        (pos): DWConv2d(
+          (conv): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=512)
+        )
+      )
+    )
+  )
+  (up4_3): Upsample(
+    (body): Sequential(
+      (0): Conv2d(512, 1024, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (1): PixelShuffle(upscale_factor=2)
+    )
+  )
+  (reduce_chan_level3): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))
+  (decoder_level3): uLayer(
+    (Relpos): RetNetRelPos2d()
+    (blocks): ModuleList(
+      (0-3): 4 x RetBlock(
+        (retention_layer_norm): LayerNorm((256,), eps=1e-06, elementwise_affine=True)
+        (retention): VisionRetentionChunk(
+          (q_proj): Linear(in_features=256, out_features=256, bias=True)
+          (k_proj): Linear(in_features=256, out_features=256, bias=True)
+          (v_proj): Linear(in_features=256, out_features=256, bias=True)
+          (lepe): DWConv2d(
+            (conv): Conv2d(256, 256, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=256)
+          )
+          (out_proj): Linear(in_features=256, out_features=256, bias=True)
+        )
+        (drop_path): DropPath(drop_prob=0.000)
+        (final_layer_norm): LayerNorm((256,), eps=1e-06, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (activation_dropout_module): Dropout(p=0.0, inplace=False)
+          (dropout_module): Dropout(p=0.0, inplace=False)
+          (fc1): Linear(in_features=256, out_features=192, bias=True)
+          (fc2): Linear(in_features=192, out_features=256, bias=True)
+          (dwconv): DWConv2d(
+            (conv): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=192)
+          )
+        )
+        (pos): DWConv2d(
+          (conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256)
+        )
+      )
+    )
+  )
+  (up3_2): Upsample(
+    (body): Sequential(
+      (0): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (1): PixelShuffle(upscale_factor=2)
+    )
+  )
+  (reduce_chan_level2): Conv2d(256, 128, kernel_size=(1, 1), stride=(1, 1))
+  (decoder_level2): uLayer(
+    (Relpos): RetNetRelPos2d()
+    (blocks): ModuleList(
+      (0-3): 4 x RetBlock(
+        (retention_layer_norm): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+        (retention): VisionRetentionChunk(
+          (q_proj): Linear(in_features=128, out_features=128, bias=True)
+          (k_proj): Linear(in_features=128, out_features=128, bias=True)
+          (v_proj): Linear(in_features=128, out_features=128, bias=True)
+          (lepe): DWConv2d(
+            (conv): Conv2d(128, 128, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=128)
+          )
+          (out_proj): Linear(in_features=128, out_features=128, bias=True)
+        )
+        (drop_path): DropPath(drop_prob=0.000)
+        (final_layer_norm): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (activation_dropout_module): Dropout(p=0.0, inplace=False)
+          (dropout_module): Dropout(p=0.0, inplace=False)
+          (fc1): Linear(in_features=128, out_features=192, bias=True)
+          (fc2): Linear(in_features=192, out_features=128, bias=True)
+          (dwconv): DWConv2d(
+            (conv): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=192)
+          )
+        )
+        (pos): DWConv2d(
+          (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128)
+        )
+      )
+    )
+  )
+  (up2_1): Upsample(
+    (body): Sequential(
+      (0): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (1): PixelShuffle(upscale_factor=2)
+    )
+  )
+  (decoder_level1): uLayer(
+    (Relpos): RetNetRelPos2d()
+    (blocks): ModuleList(
+      (0-1): 2 x RetBlock(
+        (retention_layer_norm): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+        (retention): VisionRetentionChunk(
+          (q_proj): Linear(in_features=128, out_features=128, bias=True)
+          (k_proj): Linear(in_features=128, out_features=128, bias=True)
+          (v_proj): Linear(in_features=128, out_features=128, bias=True)
+          (lepe): DWConv2d(
+            (conv): Conv2d(128, 128, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=128)
+          )
+          (out_proj): Linear(in_features=128, out_features=128, bias=True)
+        )
+        (drop_path): DropPath(drop_prob=0.000)
+        (final_layer_norm): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (activation_dropout_module): Dropout(p=0.0, inplace=False)
+          (dropout_module): Dropout(p=0.0, inplace=False)
+          (fc1): Linear(in_features=128, out_features=192, bias=True)
+          (fc2): Linear(in_features=192, out_features=128, bias=True)
+          (dwconv): DWConv2d(
+            (conv): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=192)
+          )
+        )
+        (pos): DWConv2d(
+          (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128)
+        )
+      )
+    )
+  )
+  (patchMerge): PatchMerge(
+    (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (conv2): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (conv3): Conv2d(256, 512, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+    (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  )
+  (proj): Linear(in_features=512, out_features=1024, bias=True)
+  (norm): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (swish): MemoryEfficientSwish()
+  (avgpool): AdaptiveAvgPool1d(output_size=1)
+  (head): Linear(in_features=1024, out_features=1000, bias=True)
+)
+| module                                          | #parameters or shape   | #flops     |
+|:------------------------------------------------|:-----------------------|:-----------|
+| model                                           | 21.92M                 | 4.651G     |
+|  patch_embed.proj                               |  65.952K               |  0.302G    |
+|   patch_embed.proj.0                            |   0.896K               |   10.838M  |
+|    patch_embed.proj.0.weight                    |    (32, 3, 3, 3)       |            |
+|    patch_embed.proj.0.bias                      |    (32,)               |            |
+|   patch_embed.proj.1                            |   64                   |   0.803M   |
+|    patch_embed.proj.1.weight                    |    (32,)               |            |
+|    patch_embed.proj.1.bias                      |    (32,)               |            |
+|   patch_embed.proj.3                            |   9.248K               |   0.116G   |
+|    patch_embed.proj.3.weight                    |    (32, 32, 3, 3)      |            |
+|    patch_embed.proj.3.bias                      |    (32,)               |            |
+|   patch_embed.proj.4                            |   64                   |   0.803M   |
+|    patch_embed.proj.4.weight                    |    (32,)               |            |
+|    patch_embed.proj.4.bias                      |    (32,)               |            |
+|   patch_embed.proj.6                            |   18.496K              |   57.803M  |
+|    patch_embed.proj.6.weight                    |    (64, 32, 3, 3)      |            |
+|    patch_embed.proj.6.bias                      |    (64,)               |            |
+|   patch_embed.proj.7                            |   0.128K               |   0.401M   |
+|    patch_embed.proj.7.weight                    |    (64,)               |            |
+|    patch_embed.proj.7.bias                      |    (64,)               |            |
+|   patch_embed.proj.9                            |   36.928K              |   0.116G   |
+|    patch_embed.proj.9.weight                    |    (64, 64, 3, 3)      |            |
+|    patch_embed.proj.9.bias                      |    (64,)               |            |
+|   patch_embed.proj.10                           |   0.128K               |   0.401M   |
+|    patch_embed.proj.10.weight                   |    (64,)               |            |
+|    patch_embed.proj.10.bias                     |    (64,)               |            |
+|  encoder_level1.blocks                          |  91.904K               |  0.375G    |
+|   encoder_level1.blocks.0                       |   45.952K              |   0.188G   |
+|    encoder_level1.blocks.0.retention_layer_norm |    0.128K              |    1.004M  |
+|    encoder_level1.blocks.0.retention            |    18.304K             |    0.101G  |
+|    encoder_level1.blocks.0.final_layer_norm     |    0.128K              |    1.004M  |
+|    encoder_level1.blocks.0.ffn                  |    26.752K             |    82.489M |
+|    encoder_level1.blocks.0.pos.conv             |    0.64K               |    1.806M  |
+|   encoder_level1.blocks.1                       |   45.952K              |   0.188G   |
+|    encoder_level1.blocks.1.retention_layer_norm |    0.128K              |    1.004M  |
+|    encoder_level1.blocks.1.retention            |    18.304K             |    0.101G  |
+|    encoder_level1.blocks.1.final_layer_norm     |    0.128K              |    1.004M  |
+|    encoder_level1.blocks.1.ffn                  |    26.752K             |    82.489M |
+|    encoder_level1.blocks.1.pos.conv             |    0.64K               |    1.806M  |
+|  down1_2.body.0                                 |  18.432K               |  57.803M   |
+|   down1_2.body.0.weight                         |   (32, 64, 3, 3)       |            |
+|  encoder_level2.blocks                          |  0.49M                 |  0.428G    |
+|   encoder_level2.blocks.0                       |   0.123M               |   0.107G   |
+|    encoder_level2.blocks.0.retention_layer_norm |    0.256K              |    0.502M  |
+|    encoder_level2.blocks.0.retention            |    69.376K             |    65.128M |
+|    encoder_level2.blocks.0.final_layer_norm     |    0.256K              |    0.502M  |
+|    encoder_level2.blocks.0.ffn                  |    51.392K             |    39.89M  |
+|    encoder_level2.blocks.0.pos.conv             |    1.28K               |    0.903M  |
+|   encoder_level2.blocks.1                       |   0.123M               |   0.107G   |
+|    encoder_level2.blocks.1.retention_layer_norm |    0.256K              |    0.502M  |
+|    encoder_level2.blocks.1.retention            |    69.376K             |    65.128M |
+|    encoder_level2.blocks.1.final_layer_norm     |    0.256K              |    0.502M  |
+|    encoder_level2.blocks.1.ffn                  |    51.392K             |    39.89M  |
+|    encoder_level2.blocks.1.pos.conv             |    1.28K               |    0.903M  |
+|   encoder_level2.blocks.2                       |   0.123M               |   0.107G   |
+|    encoder_level2.blocks.2.retention_layer_norm |    0.256K              |    0.502M  |
+|    encoder_level2.blocks.2.retention            |    69.376K             |    65.128M |
+|    encoder_level2.blocks.2.final_layer_norm     |    0.256K              |    0.502M  |
+|    encoder_level2.blocks.2.ffn                  |    51.392K             |    39.89M  |
+|    encoder_level2.blocks.2.pos.conv             |    1.28K               |    0.903M  |
+|   encoder_level2.blocks.3                       |   0.123M               |   0.107G   |
+|    encoder_level2.blocks.3.retention_layer_norm |    0.256K              |    0.502M  |
+|    encoder_level2.blocks.3.retention            |    69.376K             |    65.128M |
+|    encoder_level2.blocks.3.final_layer_norm     |    0.256K              |    0.502M  |
+|    encoder_level2.blocks.3.ffn                  |    51.392K             |    39.89M  |
+|    encoder_level2.blocks.3.pos.conv             |    1.28K               |    0.903M  |
+|  down2_3.body.0                                 |  73.728K               |  57.803M   |
+|   down2_3.body.0.weight                         |   (64, 128, 3, 3)      |            |
+|  encoder_level3.blocks                          |  1.496M                |  0.304G    |
+|   encoder_level3.blocks.0                       |   0.374M               |   76.004M  |
+|    encoder_level3.blocks.0.retention_layer_norm |    0.512K              |    0.251M  |
+|    encoder_level3.blocks.0.retention            |    0.27M               |    55.444M |
+|    encoder_level3.blocks.0.final_layer_norm     |    0.512K              |    0.251M  |
+|    encoder_level3.blocks.0.ffn                  |    0.101M              |    19.606M |
+|    encoder_level3.blocks.0.pos.conv             |    2.56K               |    0.452M  |
+|   encoder_level3.blocks.1                       |   0.374M               |   76.004M  |
+|    encoder_level3.blocks.1.retention_layer_norm |    0.512K              |    0.251M  |
+|    encoder_level3.blocks.1.retention            |    0.27M               |    55.444M |
+|    encoder_level3.blocks.1.final_layer_norm     |    0.512K              |    0.251M  |
+|    encoder_level3.blocks.1.ffn                  |    0.101M              |    19.606M |
+|    encoder_level3.blocks.1.pos.conv             |    2.56K               |    0.452M  |
+|   encoder_level3.blocks.2                       |   0.374M               |   76.004M  |
+|    encoder_level3.blocks.2.retention_layer_norm |    0.512K              |    0.251M  |
+|    encoder_level3.blocks.2.retention            |    0.27M               |    55.444M |
+|    encoder_level3.blocks.2.final_layer_norm     |    0.512K              |    0.251M  |
+|    encoder_level3.blocks.2.ffn                  |    0.101M              |    19.606M |
+|    encoder_level3.blocks.2.pos.conv             |    2.56K               |    0.452M  |
+|   encoder_level3.blocks.3                       |   0.374M               |   76.004M  |
+|    encoder_level3.blocks.3.retention_layer_norm |    0.512K              |    0.251M  |
+|    encoder_level3.blocks.3.retention            |    0.27M               |    55.444M |
+|    encoder_level3.blocks.3.final_layer_norm     |    0.512K              |    0.251M  |
+|    encoder_level3.blocks.3.ffn                  |    0.101M              |    19.606M |
+|    encoder_level3.blocks.3.pos.conv             |    2.56K               |    0.452M  |
+|  down3_4.body.0                                 |  0.295M                |  57.803M   |
+|   down3_4.body.0.weight                         |   (128, 256, 3, 3)     |            |
+|  latent.blocks                                  |  7.622M                |  0.388G    |
+|   latent.blocks.0                               |   1.27M                |   64.661M  |
+|    latent.blocks.0.retention_layer_norm         |    1.024K              |    0.125M  |
+|    latent.blocks.0.retention                    |    1.064M              |    54.466M |
+|    latent.blocks.0.final_layer_norm             |    1.024K              |    0.125M  |
+|    latent.blocks.0.ffn                          |    0.199M              |    9.718M  |
+|    latent.blocks.0.pos.conv                     |    5.12K               |    0.226M  |
+|   latent.blocks.1                               |   1.27M                |   64.661M  |
+|    latent.blocks.1.retention_layer_norm         |    1.024K              |    0.125M  |
+|    latent.blocks.1.retention                    |    1.064M              |    54.466M |
+|    latent.blocks.1.final_layer_norm             |    1.024K              |    0.125M  |
+|    latent.blocks.1.ffn                          |    0.199M              |    9.718M  |
+|    latent.blocks.1.pos.conv                     |    5.12K               |    0.226M  |
+|   latent.blocks.2                               |   1.27M                |   64.661M  |
+|    latent.blocks.2.retention_layer_norm         |    1.024K              |    0.125M  |
+|    latent.blocks.2.retention                    |    1.064M              |    54.466M |
+|    latent.blocks.2.final_layer_norm             |    1.024K              |    0.125M  |
+|    latent.blocks.2.ffn                          |    0.199M              |    9.718M  |
+|    latent.blocks.2.pos.conv                     |    5.12K               |    0.226M  |
+|   latent.blocks.3                               |   1.27M                |   64.661M  |
+|    latent.blocks.3.retention_layer_norm         |    1.024K              |    0.125M  |
+|    latent.blocks.3.retention                    |    1.064M              |    54.466M |
+|    latent.blocks.3.final_layer_norm             |    1.024K              |    0.125M  |
+|    latent.blocks.3.ffn                          |    0.199M              |    9.718M  |
+|    latent.blocks.3.pos.conv                     |    5.12K               |    0.226M  |
+|   latent.blocks.4                               |   1.27M                |   64.661M  |
+|    latent.blocks.4.retention_layer_norm         |    1.024K              |    0.125M  |
+|    latent.blocks.4.retention                    |    1.064M              |    54.466M |
+|    latent.blocks.4.final_layer_norm             |    1.024K              |    0.125M  |
+|    latent.blocks.4.ffn                          |    0.199M              |    9.718M  |
+|    latent.blocks.4.pos.conv                     |    5.12K               |    0.226M  |
+|   latent.blocks.5                               |   1.27M                |   64.661M  |
+|    latent.blocks.5.retention_layer_norm         |    1.024K              |    0.125M  |
+|    latent.blocks.5.retention                    |    1.064M              |    54.466M |
+|    latent.blocks.5.final_layer_norm             |    1.024K              |    0.125M  |
+|    latent.blocks.5.ffn                          |    0.199M              |    9.718M  |
+|    latent.blocks.5.pos.conv                     |    5.12K               |    0.226M  |
+|  up4_3.body.0                                   |  4.719M                |  0.231G    |
+|   up4_3.body.0.weight                           |   (1024, 512, 3, 3)    |            |
+|  reduce_chan_level3                             |  0.131M                |  25.69M    |
+|   reduce_chan_level3.weight                     |   (256, 512, 1, 1)     |            |
+|   reduce_chan_level3.bias                       |   (256,)               |            |
+|  decoder_level3.blocks                          |  1.496M                |  0.304G    |
+|   decoder_level3.blocks.0                       |   0.374M               |   76.004M  |
+|    decoder_level3.blocks.0.retention_layer_norm |    0.512K              |    0.251M  |
+|    decoder_level3.blocks.0.retention            |    0.27M               |    55.444M |
+|    decoder_level3.blocks.0.final_layer_norm     |    0.512K              |    0.251M  |
+|    decoder_level3.blocks.0.ffn                  |    0.101M              |    19.606M |
+|    decoder_level3.blocks.0.pos.conv             |    2.56K               |    0.452M  |
+|   decoder_level3.blocks.1                       |   0.374M               |   76.004M  |
+|    decoder_level3.blocks.1.retention_layer_norm |    0.512K              |    0.251M  |
+|    decoder_level3.blocks.1.retention            |    0.27M               |    55.444M |
+|    decoder_level3.blocks.1.final_layer_norm     |    0.512K              |    0.251M  |
+|    decoder_level3.blocks.1.ffn                  |    0.101M              |    19.606M |
+|    decoder_level3.blocks.1.pos.conv             |    2.56K               |    0.452M  |
+|   decoder_level3.blocks.2                       |   0.374M               |   76.004M  |
+|    decoder_level3.blocks.2.retention_layer_norm |    0.512K              |    0.251M  |
+|    decoder_level3.blocks.2.retention            |    0.27M               |    55.444M |
+|    decoder_level3.blocks.2.final_layer_norm     |    0.512K              |    0.251M  |
+|    decoder_level3.blocks.2.ffn                  |    0.101M              |    19.606M |
+|    decoder_level3.blocks.2.pos.conv             |    2.56K               |    0.452M  |
+|   decoder_level3.blocks.3                       |   0.374M               |   76.004M  |
+|    decoder_level3.blocks.3.retention_layer_norm |    0.512K              |    0.251M  |
+|    decoder_level3.blocks.3.retention            |    0.27M               |    55.444M |
+|    decoder_level3.blocks.3.final_layer_norm     |    0.512K              |    0.251M  |
+|    decoder_level3.blocks.3.ffn                  |    0.101M              |    19.606M |
+|    decoder_level3.blocks.3.pos.conv             |    2.56K               |    0.452M  |
+|  up3_2.body.0                                   |  1.18M                 |  0.231G    |
+|   up3_2.body.0.weight                           |   (512, 256, 3, 3)     |            |
+|  reduce_chan_level2                             |  32.896K               |  25.69M    |
+|   reduce_chan_level2.weight                     |   (128, 256, 1, 1)     |            |
+|   reduce_chan_level2.bias                       |   (128,)               |            |
+|  decoder_level2.blocks                          |  0.49M                 |  0.428G    |
+|   decoder_level2.blocks.0                       |   0.123M               |   0.107G   |
+|    decoder_level2.blocks.0.retention_layer_norm |    0.256K              |    0.502M  |
+|    decoder_level2.blocks.0.retention            |    69.376K             |    65.128M |
+|    decoder_level2.blocks.0.final_layer_norm     |    0.256K              |    0.502M  |
+|    decoder_level2.blocks.0.ffn                  |    51.392K             |    39.89M  |
+|    decoder_level2.blocks.0.pos.conv             |    1.28K               |    0.903M  |
+|   decoder_level2.blocks.1                       |   0.123M               |   0.107G   |
+|    decoder_level2.blocks.1.retention_layer_norm |    0.256K              |    0.502M  |
+|    decoder_level2.blocks.1.retention            |    69.376K             |    65.128M |
+|    decoder_level2.blocks.1.final_layer_norm     |    0.256K              |    0.502M  |
+|    decoder_level2.blocks.1.ffn                  |    51.392K             |    39.89M  |
+|    decoder_level2.blocks.1.pos.conv             |    1.28K               |    0.903M  |
+|   decoder_level2.blocks.2                       |   0.123M               |   0.107G   |
+|    decoder_level2.blocks.2.retention_layer_norm |    0.256K              |    0.502M  |
+|    decoder_level2.blocks.2.retention            |    69.376K             |    65.128M |
+|    decoder_level2.blocks.2.final_layer_norm     |    0.256K              |    0.502M  |
+|    decoder_level2.blocks.2.ffn                  |    51.392K             |    39.89M  |
+|    decoder_level2.blocks.2.pos.conv             |    1.28K               |    0.903M  |
+|   decoder_level2.blocks.3                       |   0.123M               |   0.107G   |
+|    decoder_level2.blocks.3.retention_layer_norm |    0.256K              |    0.502M  |
+|    decoder_level2.blocks.3.retention            |    69.376K             |    65.128M |
+|    decoder_level2.blocks.3.final_layer_norm     |    0.256K              |    0.502M  |
+|    decoder_level2.blocks.3.ffn                  |    51.392K             |    39.89M  |
+|    decoder_level2.blocks.3.pos.conv             |    1.28K               |    0.903M  |
+|  up2_1.body.0                                   |  0.295M                |  0.231G    |
+|   up2_1.body.0.weight                           |   (256, 128, 3, 3)     |            |
+|  decoder_level1.blocks                          |  0.245M                |  0.945G    |
+|   decoder_level1.blocks.0                       |   0.123M               |   0.473G   |
+|    decoder_level1.blocks.0.retention_layer_norm |    0.256K              |    2.007M  |
+|    decoder_level1.blocks.0.retention            |    69.376K             |    0.305G  |
+|    decoder_level1.blocks.0.final_layer_norm     |    0.256K              |    2.007M  |
+|    decoder_level1.blocks.0.ffn                  |    51.392K             |    0.16G   |
+|    decoder_level1.blocks.0.pos.conv             |    1.28K               |    3.613M  |
+|   decoder_level1.blocks.1                       |   0.123M               |   0.473G   |
+|    decoder_level1.blocks.1.retention_layer_norm |    0.256K              |    2.007M  |
+|    decoder_level1.blocks.1.retention            |    69.376K             |    0.305G  |
+|    decoder_level1.blocks.1.final_layer_norm     |    0.256K              |    2.007M  |
+|    decoder_level1.blocks.1.ffn                  |    51.392K             |    0.16G   |
+|    decoder_level1.blocks.1.pos.conv             |    1.28K               |    3.613M  |
+|  patchMerge                                     |  1.625M                |  0.232G    |
+|   patchMerge.conv1                              |   0.148M               |   0.116G   |
+|    patchMerge.conv1.weight                      |    (128, 128, 3, 3)    |            |
+|    patchMerge.conv1.bias                        |    (128,)              |            |
+|   patchMerge.bn1                                |   0.256K               |   0.201M   |
+|    patchMerge.bn1.weight                        |    (128,)              |            |
+|    patchMerge.bn1.bias                          |    (128,)              |            |
+|   patchMerge.conv2                              |   0.295M               |   57.803M  |
+|    patchMerge.conv2.weight                      |    (256, 128, 3, 3)    |            |
+|    patchMerge.conv2.bias                        |    (256,)              |            |
+|   patchMerge.bn2                                |   0.512K               |   0.1M     |
+|    patchMerge.bn2.weight                        |    (256,)              |            |
+|    patchMerge.bn2.bias                          |    (256,)              |            |
+|   patchMerge.conv3                              |   1.18M                |   57.803M  |
+|    patchMerge.conv3.weight                      |    (512, 256, 3, 3)    |            |
+|    patchMerge.conv3.bias                        |    (512,)              |            |
+|   patchMerge.bn3                                |   1.024K               |   50.176K  |
+|    patchMerge.bn3.weight                        |    (512,)              |            |
+|    patchMerge.bn3.bias                          |    (512,)              |            |
+|  proj                                           |  0.525M                |  25.69M    |
+|   proj.weight                                   |   (1024, 512)          |            |
+|   proj.bias                                     |   (1024,)              |            |
+|  norm                                           |  2.048K                |  0.1M      |
+|   norm.weight                                   |   (1024,)              |            |
+|   norm.bias                                     |   (1024,)              |            |
+|  head                                           |  1.025M                |  1.024M    |
+|   head.weight                                   |   (1000, 1024)         |            |
+|   head.bias                                     |   (1000,)              |            |
+number of params: 21919624
+Start training for 300 epochs
+Epoch: [1]  [    0/10008]  eta: 20:33:26  lr: 0.000001  loss: 6.8626 (6.8626)  time: 7.3948  data: 3.6909  max mem: 11329
+Epoch: [1]  [   10/10008]  eta: 2:34:57  lr: 0.000001  loss: 6.8352 (6.8341)  time: 0.9299  data: 0.3358  max mem: 11329
+Epoch: [1]  [   20/10008]  eta: 1:43:24  lr: 0.000001  loss: 6.8354 (6.8416)  time: 0.2826  data: 0.0003  max mem: 11329
+Epoch: [1]  [   30/10008]  eta: 1:24:43  lr: 0.000001  loss: 6.8560 (6.8498)  time: 0.2782  data: 0.0002  max mem: 11329
+Epoch: [1]  [   40/10008]  eta: 1:15:14  lr: 0.000001  loss: 6.8419 (6.8453)  time: 0.2762  data: 0.0002  max mem: 11329
+Epoch: [1]  [   50/10008]  eta: 1:09:33  lr: 0.000001  loss: 6.8377 (6.8471)  time: 0.2790  data: 0.0002  max mem: 11329
+Epoch: [1]  [   60/10008]  eta: 1:05:52  lr: 0.000001  loss: 6.8579 (6.8483)  time: 0.2834  data: 0.0002  max mem: 11329
+Epoch: [1]  [   70/10008]  eta: 1:03:00  lr: 0.000001  loss: 6.8463 (6.8459)  time: 0.2819  data: 0.0002  max mem: 11329
+Epoch: [1]  [   80/10008]  eta: 1:00:28  lr: 0.000001  loss: 6.8434 (6.8451)  time: 0.2684  data: 0.0002  max mem: 11329
+Epoch: [1]  [   90/10008]  eta: 0:58:33  lr: 0.000001  loss: 6.8447 (6.8458)  time: 0.2614  data: 0.0002  max mem: 11329
+Epoch: [1]  [  100/10008]  eta: 0:57:15  lr: 0.000001  loss: 6.8447 (6.8463)  time: 0.2705  data: 0.0002  max mem: 11329
+Epoch: [1]  [  110/10008]  eta: 0:56:05  lr: 0.000001  loss: 6.8554 (6.8483)  time: 0.2749  data: 0.0002  max mem: 11329
+Epoch: [1]  [  120/10008]  eta: 0:54:50  lr: 0.000001  loss: 6.8554 (6.8483)  time: 0.2625  data: 0.0002  max mem: 11329
+Epoch: [1]  [  130/10008]  eta: 0:53:45  lr: 0.000001  loss: 6.8518 (6.8479)  time: 0.2519  data: 0.0002  max mem: 11329
+Epoch: [1]  [  140/10008]  eta: 0:53:00  lr: 0.000001  loss: 6.8604 (6.8495)  time: 0.2586  data: 0.0002  max mem: 11329
+Epoch: [1]  [  150/10008]  eta: 0:52:27  lr: 0.000001  loss: 6.8639 (6.8494)  time: 0.2720  data: 0.0002  max mem: 11329
+Epoch: [1]  [  160/10008]  eta: 0:51:54  lr: 0.000001  loss: 6.8559 (6.8501)  time: 0.2740  data: 0.0002  max mem: 11329
+Epoch: [1]  [  170/10008]  eta: 0:51:17  lr: 0.000001  loss: 6.8475 (6.8504)  time: 0.2638  data: 0.0002  max mem: 11329
+Epoch: [1]  [  180/10008]  eta: 0:50:42  lr: 0.000001  loss: 6.8642 (6.8520)  time: 0.2556  data: 0.0002  max mem: 11329
+Epoch: [1]  [  190/10008]  eta: 0:50:14  lr: 0.000001  loss: 6.8734 (6.8513)  time: 0.2578  data: 0.0002  max mem: 11329
+Epoch: [1]  [  200/10008]  eta: 0:49:50  lr: 0.000001  loss: 6.8389 (6.8510)  time: 0.2626  data: 0.0002  max mem: 11329
+Epoch: [1]  [  210/10008]  eta: 0:49:30  lr: 0.000001  loss: 6.8514 (6.8508)  time: 0.2666  data: 0.0002  max mem: 11329
+Epoch: [1]  [  220/10008]  eta: 0:49:06  lr: 0.000001  loss: 6.8503 (6.8505)  time: 0.2627  data: 0.0002  max mem: 11329
+Epoch: [1]  [  230/10008]  eta: 0:48:52  lr: 0.000001  loss: 6.8427 (6.8500)  time: 0.2646  data: 0.0002  max mem: 11329
+Epoch: [1]  [  240/10008]  eta: 0:48:37  lr: 0.000001  loss: 6.8494 (6.8501)  time: 0.2727  data: 0.0002  max mem: 11329
+Epoch: [1]  [  250/10008]  eta: 0:48:17  lr: 0.000001  loss: 6.8494 (6.8503)  time: 0.2625  data: 0.0002  max mem: 11329
+Epoch: [1]  [  260/10008]  eta: 0:47:58  lr: 0.000001  loss: 6.8504 (6.8501)  time: 0.2539  data: 0.0002  max mem: 11329
+Epoch: [1]  [  270/10008]  eta: 0:47:40  lr: 0.000001  loss: 6.8392 (6.8491)  time: 0.2539  data: 0.0002  max mem: 11329
+Epoch: [1]  [  280/10008]  eta: 0:47:22  lr: 0.000001  loss: 6.8479 (6.8491)  time: 0.2519  data: 0.0002  max mem: 11329
+Epoch: [1]  [  290/10008]  eta: 0:47:09  lr: 0.000001  loss: 6.8496 (6.8489)  time: 0.2568  data: 0.0002  max mem: 11329
+Epoch: [1]  [  300/10008]  eta: 0:47:02  lr: 0.000001  loss: 6.8499 (6.8493)  time: 0.2705  data: 0.0002  max mem: 11329
+Epoch: [1]  [  310/10008]  eta: 0:46:54  lr: 0.000001  loss: 6.8499 (6.8491)  time: 0.2763  data: 0.0002  max mem: 11329
+Epoch: [1]  [  320/10008]  eta: 0:46:45  lr: 0.000001  loss: 6.8571 (6.8497)  time: 0.2725  data: 0.0002  max mem: 11329
+Epoch: [1]  [  330/10008]  eta: 0:46:38  lr: 0.000001  loss: 6.8600 (6.8500)  time: 0.2723  data: 0.0002  max mem: 11329
+Epoch: [1]  [  340/10008]  eta: 0:46:24  lr: 0.000001  loss: 6.8554 (6.8504)  time: 0.2617  data: 0.0002  max mem: 11329
+Epoch: [1]  [  350/10008]  eta: 0:46:10  lr: 0.000001  loss: 6.8554 (6.8509)  time: 0.2490  data: 0.0003  max mem: 11329
+Epoch: [1]  [  360/10008]  eta: 0:45:56  lr: 0.000001  loss: 6.8588 (6.8509)  time: 0.2468  data: 0.0002  max mem: 11329
+Epoch: [1]  [  370/10008]  eta: 0:45:49  lr: 0.000001  loss: 6.8636 (6.8514)  time: 0.2574  data: 0.0003  max mem: 11329
+Epoch: [1]  [  380/10008]  eta: 0:45:44  lr: 0.000001  loss: 6.8600 (6.8516)  time: 0.2739  data: 0.0003  max mem: 11329
+Epoch: [1]  [  390/10008]  eta: 0:45:40  lr: 0.000001  loss: 6.8651 (6.8522)  time: 0.2788  data: 0.0002  max mem: 11329
+Epoch: [1]  [  400/10008]  eta: 0:45:35  lr: 0.000001  loss: 6.8717 (6.8523)  time: 0.2776  data: 0.0002  max mem: 11329
+Epoch: [1]  [  410/10008]  eta: 0:45:31  lr: 0.000001  loss: 6.8651 (6.8527)  time: 0.2767  data: 0.0002  max mem: 11329
+Epoch: [1]  [  420/10008]  eta: 0:45:26  lr: 0.000001  loss: 6.8639 (6.8529)  time: 0.2777  data: 0.0002  max mem: 11329
+Epoch: [1]  [  430/10008]  eta: 0:45:21  lr: 0.000001  loss: 6.8882 (6.8541)  time: 0.2759  data: 0.0002  max mem: 11329
+Epoch: [1]  [  440/10008]  eta: 0:45:17  lr: 0.000001  loss: 6.8882 (6.8541)  time: 0.2763  data: 0.0002  max mem: 11329
+Epoch: [1]  [  450/10008]  eta: 0:45:06  lr: 0.000001  loss: 6.8524 (6.8541)  time: 0.2622  data: 0.0002  max mem: 11329
+Epoch: [1]  [  460/10008]  eta: 0:44:57  lr: 0.000001  loss: 6.8434 (6.8541)  time: 0.2496  data: 0.0002  max mem: 11329
+Epoch: [1]  [  470/10008]  eta: 0:44:50  lr: 0.000001  loss: 6.8483 (6.8540)  time: 0.2568  data: 0.0002  max mem: 11329
+Epoch: [1]  [  480/10008]  eta: 0:44:44  lr: 0.000001  loss: 6.8611 (6.8540)  time: 0.2655  data: 0.0002  max mem: 11329
+Epoch: [1]  [  490/10008]  eta: 0:44:38  lr: 0.000001  loss: 6.8503 (6.8539)  time: 0.2664  data: 0.0002  max mem: 11329
+Epoch: [1]  [  500/10008]  eta: 0:44:31  lr: 0.000001  loss: 6.8503 (6.8538)  time: 0.2624  data: 0.0003  max mem: 11329
+Epoch: [1]  [  510/10008]  eta: 0:44:28  lr: 0.000001  loss: 6.8457 (6.8538)  time: 0.2689  data: 0.0002  max mem: 11329
+Epoch: [1]  [  520/10008]  eta: 0:44:24  lr: 0.000001  loss: 6.8447 (6.8539)  time: 0.2753  data: 0.0002  max mem: 11329
+Epoch: [1]  [  530/10008]  eta: 0:44:20  lr: 0.000001  loss: 6.8500 (6.8539)  time: 0.2745  data: 0.0002  max mem: 11329
+Epoch: [1]  [  540/10008]  eta: 0:44:17  lr: 0.000001  loss: 6.8623 (6.8540)  time: 0.2766  data: 0.0002  max mem: 11329
+Epoch: [1]  [  550/10008]  eta: 0:44:14  lr: 0.000001  loss: 6.8609 (6.8539)  time: 0.2811  data: 0.0003  max mem: 11329
+Epoch: [1]  [  560/10008]  eta: 0:44:11  lr: 0.000001  loss: 6.8609 (6.8539)  time: 0.2802  data: 0.0002  max mem: 11329
+Epoch: [1]  [  570/10008]  eta: 0:44:08  lr: 0.000001  loss: 6.8594 (6.8539)  time: 0.2773  data: 0.0002  max mem: 11329
+Epoch: [1]  [  580/10008]  eta: 0:44:04  lr: 0.000001  loss: 6.8546 (6.8537)  time: 0.2750  data: 0.0002  max mem: 11329
+Epoch: [1]  [  590/10008]  eta: 0:43:59  lr: 0.000001  loss: 6.8539 (6.8538)  time: 0.2720  data: 0.0002  max mem: 11329
+Epoch: [1]  [  600/10008]  eta: 0:43:55  lr: 0.000001  loss: 6.8476 (6.8534)  time: 0.2727  data: 0.0002  max mem: 11329
+Epoch: [1]  [  610/10008]  eta: 0:43:51  lr: 0.000001  loss: 6.8370 (6.8533)  time: 0.2727  data: 0.0002  max mem: 11329
+Epoch: [1]  [  620/10008]  eta: 0:43:49  lr: 0.000001  loss: 6.8429 (6.8533)  time: 0.2777  data: 0.0002  max mem: 11329
+Epoch: [1]  [  630/10008]  eta: 0:43:43  lr: 0.000001  loss: 6.8429 (6.8533)  time: 0.2723  data: 0.0002  max mem: 11329
+Epoch: [1]  [  640/10008]  eta: 0:43:36  lr: 0.000001  loss: 6.8457 (6.8531)  time: 0.2549  data: 0.0002  max mem: 11329
+Epoch: [1]  [  650/10008]  eta: 0:43:31  lr: 0.000001  loss: 6.8582 (6.8533)  time: 0.2555  data: 0.0002  max mem: 11329
+Epoch: [1]  [  660/10008]  eta: 0:43:27  lr: 0.000001  loss: 6.8593 (6.8534)  time: 0.2666  data: 0.0002  max mem: 11329
+Epoch: [1]  [  670/10008]  eta: 0:43:24  lr: 0.000001  loss: 6.8575 (6.8534)  time: 0.2734  data: 0.0002  max mem: 11329
+Epoch: [1]  [  680/10008]  eta: 0:43:21  lr: 0.000001  loss: 6.8478 (6.8533)  time: 0.2763  data: 0.0002  max mem: 11329
+Epoch: [1]  [  690/10008]  eta: 0:43:17  lr: 0.000001  loss: 6.8368 (6.8530)  time: 0.2751  data: 0.0002  max mem: 11329
+Epoch: [1]  [  700/10008]  eta: 0:43:12  lr: 0.000001  loss: 6.8388 (6.8531)  time: 0.2688  data: 0.0002  max mem: 11329
+Epoch: [1]  [  710/10008]  eta: 0:43:06  lr: 0.000001  loss: 6.8460 (6.8532)  time: 0.2568  data: 0.0001  max mem: 11329
+Epoch: [1]  [  720/10008]  eta: 0:43:01  lr: 0.000001  loss: 6.8428 (6.8531)  time: 0.2566  data: 0.0002  max mem: 11329
+Epoch: [1]  [  730/10008]  eta: 0:42:59  lr: 0.000001  loss: 6.8441 (6.8528)  time: 0.2724  data: 0.0002  max mem: 11329
+Epoch: [1]  [  740/10008]  eta: 0:42:56  lr: 0.000001  loss: 6.8441 (6.8528)  time: 0.2794  data: 0.0002  max mem: 11329
+Epoch: [1]  [  750/10008]  eta: 0:42:53  lr: 0.000001  loss: 6.8455 (6.8528)  time: 0.2777  data: 0.0002  max mem: 11329
+Epoch: [1]  [  760/10008]  eta: 0:42:49  lr: 0.000001  loss: 6.8530 (6.8529)  time: 0.2710  data: 0.0002  max mem: 11329
+Epoch: [1]  [  770/10008]  eta: 0:42:42  lr: 0.000001  loss: 6.8589 (6.8530)  time: 0.2560  data: 0.0002  max mem: 11329
+Epoch: [1]  [  780/10008]  eta: 0:42:41  lr: 0.000001  loss: 6.8632 (6.8530)  time: 0.2669  data: 0.0002  max mem: 11329
+Epoch: [1]  [  790/10008]  eta: 0:42:38  lr: 0.000001  loss: 6.8592 (6.8532)  time: 0.2833  data: 0.0002  max mem: 11329
+Epoch: [1]  [  800/10008]  eta: 0:42:35  lr: 0.000001  loss: 6.8554 (6.8529)  time: 0.2776  data: 0.0002  max mem: 11329
+Epoch: [1]  [  810/10008]  eta: 0:42:32  lr: 0.000001  loss: 6.8212 (6.8525)  time: 0.2757  data: 0.0002  max mem: 11329
+Epoch: [1]  [  820/10008]  eta: 0:42:27  lr: 0.000001  loss: 6.8331 (6.8525)  time: 0.2671  data: 0.0002  max mem: 11329
+Epoch: [1]  [  830/10008]  eta: 0:42:21  lr: 0.000001  loss: 6.8597 (6.8525)  time: 0.2534  data: 0.0002  max mem: 11329
+Epoch: [1]  [  840/10008]  eta: 0:42:15  lr: 0.000001  loss: 6.8611 (6.8526)  time: 0.2488  data: 0.0002  max mem: 11329
+Epoch: [1]  [  850/10008]  eta: 0:42:10  lr: 0.000001  loss: 6.8652 (6.8526)  time: 0.2508  data: 0.0002  max mem: 11329
+Epoch: [1]  [  860/10008]  eta: 0:42:05  lr: 0.000001  loss: 6.8652 (6.8527)  time: 0.2531  data: 0.0002  max mem: 11329
+Epoch: [1]  [  870/10008]  eta: 0:42:00  lr: 0.000001  loss: 6.8611 (6.8528)  time: 0.2571  data: 0.0002  max mem: 11329
+Epoch: [1]  [  880/10008]  eta: 0:41:58  lr: 0.000001  loss: 6.8611 (6.8528)  time: 0.2697  data: 0.0002  max mem: 11329
+Epoch: [1]  [  890/10008]  eta: 0:41:56  lr: 0.000001  loss: 6.8565 (6.8528)  time: 0.2800  data: 0.0002  max mem: 11329
+Epoch: [1]  [  900/10008]  eta: 0:41:51  lr: 0.000001  loss: 6.8532 (6.8528)  time: 0.2706  data: 0.0002  max mem: 11329
+Epoch: [1]  [  910/10008]  eta: 0:41:49  lr: 0.000001  loss: 6.8532 (6.8529)  time: 0.2678  data: 0.0002  max mem: 11329
+Epoch: [1]  [  920/10008]  eta: 0:41:46  lr: 0.000001  loss: 6.8560 (6.8530)  time: 0.2765  data: 0.0002  max mem: 11329
+Epoch: [1]  [  930/10008]  eta: 0:41:44  lr: 0.000001  loss: 6.8547 (6.8530)  time: 0.2789  data: 0.0002  max mem: 11329
+Epoch: [1]  [  940/10008]  eta: 0:41:41  lr: 0.000001  loss: 6.8509 (6.8529)  time: 0.2795  data: 0.0002  max mem: 11329
+Epoch: [1]  [  950/10008]  eta: 0:41:36  lr: 0.000001  loss: 6.8377 (6.8524)  time: 0.2654  data: 0.0002  max mem: 11329
+Epoch: [1]  [  960/10008]  eta: 0:41:31  lr: 0.000001  loss: 6.8360 (6.8524)  time: 0.2521  data: 0.0003  max mem: 11329
+Epoch: [1]  [  970/10008]  eta: 0:41:26  lr: 0.000001  loss: 6.8376 (6.8523)  time: 0.2507  data: 0.0002  max mem: 11329
+Epoch: [1]  [  980/10008]  eta: 0:41:21  lr: 0.000001  loss: 6.8403 (6.8522)  time: 0.2520  data: 0.0002  max mem: 11329
+Epoch: [1]  [  990/10008]  eta: 0:41:19  lr: 0.000001  loss: 6.8578 (6.8524)  time: 0.2660  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 1000/10008]  eta: 0:41:16  lr: 0.000001  loss: 6.8600 (6.8524)  time: 0.2780  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 1010/10008]  eta: 0:41:14  lr: 0.000001  loss: 6.8551 (6.8524)  time: 0.2793  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1020/10008]  eta: 0:41:13  lr: 0.000001  loss: 6.8550 (6.8523)  time: 0.2850  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1030/10008]  eta: 0:41:10  lr: 0.000001  loss: 6.8264 (6.8522)  time: 0.2844  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1040/10008]  eta: 0:41:06  lr: 0.000001  loss: 6.8503 (6.8522)  time: 0.2683  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1050/10008]  eta: 0:41:01  lr: 0.000001  loss: 6.8467 (6.8521)  time: 0.2540  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1060/10008]  eta: 0:40:56  lr: 0.000001  loss: 6.8467 (6.8522)  time: 0.2493  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1070/10008]  eta: 0:40:51  lr: 0.000001  loss: 6.8566 (6.8522)  time: 0.2486  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1080/10008]  eta: 0:40:47  lr: 0.000001  loss: 6.8588 (6.8523)  time: 0.2508  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1090/10008]  eta: 0:40:44  lr: 0.000001  loss: 6.8531 (6.8523)  time: 0.2630  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1100/10008]  eta: 0:40:41  lr: 0.000001  loss: 6.8410 (6.8521)  time: 0.2745  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1110/10008]  eta: 0:40:39  lr: 0.000001  loss: 6.8385 (6.8519)  time: 0.2742  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1120/10008]  eta: 0:40:34  lr: 0.000001  loss: 6.8431 (6.8519)  time: 0.2647  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1130/10008]  eta: 0:40:30  lr: 0.000001  loss: 6.8520 (6.8519)  time: 0.2554  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1140/10008]  eta: 0:40:27  lr: 0.000001  loss: 6.8520 (6.8518)  time: 0.2633  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1150/10008]  eta: 0:40:24  lr: 0.000001  loss: 6.8364 (6.8517)  time: 0.2695  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1160/10008]  eta: 0:40:20  lr: 0.000001  loss: 6.8387 (6.8516)  time: 0.2592  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1170/10008]  eta: 0:40:17  lr: 0.000001  loss: 6.8396 (6.8515)  time: 0.2655  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1180/10008]  eta: 0:40:15  lr: 0.000001  loss: 6.8460 (6.8516)  time: 0.2784  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1190/10008]  eta: 0:40:12  lr: 0.000001  loss: 6.8531 (6.8517)  time: 0.2780  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1200/10008]  eta: 0:40:09  lr: 0.000001  loss: 6.8595 (6.8518)  time: 0.2721  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 1210/10008]  eta: 0:40:07  lr: 0.000001  loss: 6.8436 (6.8516)  time: 0.2718  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1220/10008]  eta: 0:40:04  lr: 0.000001  loss: 6.8317 (6.8514)  time: 0.2769  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1230/10008]  eta: 0:40:01  lr: 0.000001  loss: 6.8400 (6.8514)  time: 0.2712  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1240/10008]  eta: 0:39:56  lr: 0.000001  loss: 6.8529 (6.8514)  time: 0.2571  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1250/10008]  eta: 0:39:52  lr: 0.000001  loss: 6.8571 (6.8514)  time: 0.2487  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1260/10008]  eta: 0:39:48  lr: 0.000001  loss: 6.8571 (6.8515)  time: 0.2493  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1270/10008]  eta: 0:39:44  lr: 0.000001  loss: 6.8500 (6.8514)  time: 0.2578  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1280/10008]  eta: 0:39:41  lr: 0.000001  loss: 6.8596 (6.8514)  time: 0.2658  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1290/10008]  eta: 0:39:39  lr: 0.000001  loss: 6.8656 (6.8515)  time: 0.2725  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1300/10008]  eta: 0:39:36  lr: 0.000001  loss: 6.8506 (6.8514)  time: 0.2763  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1310/10008]  eta: 0:39:32  lr: 0.000001  loss: 6.8307 (6.8513)  time: 0.2630  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1320/10008]  eta: 0:39:29  lr: 0.000001  loss: 6.8534 (6.8513)  time: 0.2595  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1330/10008]  eta: 0:39:27  lr: 0.000001  loss: 6.8546 (6.8514)  time: 0.2729  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1340/10008]  eta: 0:39:24  lr: 0.000001  loss: 6.8535 (6.8513)  time: 0.2810  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1350/10008]  eta: 0:39:21  lr: 0.000001  loss: 6.8512 (6.8514)  time: 0.2703  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1360/10008]  eta: 0:39:17  lr: 0.000001  loss: 6.8496 (6.8513)  time: 0.2557  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1370/10008]  eta: 0:39:13  lr: 0.000001  loss: 6.8398 (6.8513)  time: 0.2569  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1380/10008]  eta: 0:39:11  lr: 0.000001  loss: 6.8429 (6.8513)  time: 0.2675  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 1390/10008]  eta: 0:39:07  lr: 0.000001  loss: 6.8432 (6.8512)  time: 0.2663  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 1400/10008]  eta: 0:39:03  lr: 0.000001  loss: 6.8514 (6.8512)  time: 0.2573  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 1410/10008]  eta: 0:39:00  lr: 0.000001  loss: 6.8527 (6.8512)  time: 0.2556  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1420/10008]  eta: 0:38:56  lr: 0.000001  loss: 6.8483 (6.8513)  time: 0.2535  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1430/10008]  eta: 0:38:52  lr: 0.000001  loss: 6.8521 (6.8514)  time: 0.2511  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1440/10008]  eta: 0:38:48  lr: 0.000001  loss: 6.8495 (6.8514)  time: 0.2505  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1450/10008]  eta: 0:38:45  lr: 0.000001  loss: 6.8481 (6.8514)  time: 0.2570  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 1460/10008]  eta: 0:38:42  lr: 0.000001  loss: 6.8591 (6.8514)  time: 0.2701  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 1470/10008]  eta: 0:38:39  lr: 0.000001  loss: 6.8650 (6.8515)  time: 0.2726  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1480/10008]  eta: 0:38:37  lr: 0.000001  loss: 6.8443 (6.8514)  time: 0.2775  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1490/10008]  eta: 0:38:35  lr: 0.000001  loss: 6.8433 (6.8514)  time: 0.2797  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1500/10008]  eta: 0:38:32  lr: 0.000001  loss: 6.8503 (6.8514)  time: 0.2767  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1510/10008]  eta: 0:38:30  lr: 0.000001  loss: 6.8503 (6.8514)  time: 0.2794  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1520/10008]  eta: 0:38:27  lr: 0.000001  loss: 6.8450 (6.8514)  time: 0.2713  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1530/10008]  eta: 0:38:24  lr: 0.000001  loss: 6.8450 (6.8513)  time: 0.2631  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1540/10008]  eta: 0:38:21  lr: 0.000001  loss: 6.8684 (6.8515)  time: 0.2715  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1550/10008]  eta: 0:38:19  lr: 0.000001  loss: 6.8685 (6.8515)  time: 0.2792  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1560/10008]  eta: 0:38:16  lr: 0.000001  loss: 6.8597 (6.8515)  time: 0.2757  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 1570/10008]  eta: 0:38:13  lr: 0.000001  loss: 6.8417 (6.8515)  time: 0.2633  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1580/10008]  eta: 0:38:09  lr: 0.000001  loss: 6.8450 (6.8515)  time: 0.2551  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1590/10008]  eta: 0:38:07  lr: 0.000001  loss: 6.8413 (6.8513)  time: 0.2728  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1600/10008]  eta: 0:38:05  lr: 0.000001  loss: 6.8214 (6.8513)  time: 0.2826  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 1610/10008]  eta: 0:38:02  lr: 0.000001  loss: 6.8434 (6.8511)  time: 0.2762  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1620/10008]  eta: 0:38:00  lr: 0.000001  loss: 6.8320 (6.8510)  time: 0.2750  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1630/10008]  eta: 0:37:57  lr: 0.000001  loss: 6.8320 (6.8510)  time: 0.2686  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1640/10008]  eta: 0:37:54  lr: 0.000001  loss: 6.8393 (6.8509)  time: 0.2692  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1650/10008]  eta: 0:37:51  lr: 0.000001  loss: 6.8152 (6.8507)  time: 0.2744  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1660/10008]  eta: 0:37:49  lr: 0.000001  loss: 6.8136 (6.8506)  time: 0.2754  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1670/10008]  eta: 0:37:47  lr: 0.000001  loss: 6.8313 (6.8505)  time: 0.2783  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1680/10008]  eta: 0:37:44  lr: 0.000001  loss: 6.8488 (6.8505)  time: 0.2779  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1690/10008]  eta: 0:37:42  lr: 0.000001  loss: 6.8542 (6.8505)  time: 0.2758  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1700/10008]  eta: 0:37:39  lr: 0.000001  loss: 6.8470 (6.8505)  time: 0.2744  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1710/10008]  eta: 0:37:35  lr: 0.000001  loss: 6.8529 (6.8505)  time: 0.2628  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1720/10008]  eta: 0:37:32  lr: 0.000001  loss: 6.8517 (6.8504)  time: 0.2509  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1730/10008]  eta: 0:37:28  lr: 0.000001  loss: 6.8517 (6.8505)  time: 0.2509  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1740/10008]  eta: 0:37:24  lr: 0.000001  loss: 6.8466 (6.8504)  time: 0.2511  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1750/10008]  eta: 0:37:20  lr: 0.000001  loss: 6.8392 (6.8504)  time: 0.2510  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1760/10008]  eta: 0:37:17  lr: 0.000001  loss: 6.8373 (6.8504)  time: 0.2547  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1770/10008]  eta: 0:37:14  lr: 0.000001  loss: 6.8332 (6.8504)  time: 0.2651  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1780/10008]  eta: 0:37:12  lr: 0.000001  loss: 6.8267 (6.8503)  time: 0.2728  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1790/10008]  eta: 0:37:09  lr: 0.000001  loss: 6.8281 (6.8502)  time: 0.2735  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1800/10008]  eta: 0:37:07  lr: 0.000001  loss: 6.8354 (6.8502)  time: 0.2767  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 1810/10008]  eta: 0:37:04  lr: 0.000001  loss: 6.8345 (6.8500)  time: 0.2787  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1820/10008]  eta: 0:37:02  lr: 0.000001  loss: 6.8495 (6.8501)  time: 0.2768  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1830/10008]  eta: 0:36:59  lr: 0.000001  loss: 6.8581 (6.8502)  time: 0.2761  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1840/10008]  eta: 0:36:57  lr: 0.000001  loss: 6.8547 (6.8501)  time: 0.2759  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1850/10008]  eta: 0:36:55  lr: 0.000001  loss: 6.8488 (6.8501)  time: 0.2787  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1860/10008]  eta: 0:36:52  lr: 0.000001  loss: 6.8512 (6.8501)  time: 0.2791  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1870/10008]  eta: 0:36:49  lr: 0.000001  loss: 6.8406 (6.8501)  time: 0.2713  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1880/10008]  eta: 0:36:46  lr: 0.000001  loss: 6.8372 (6.8501)  time: 0.2579  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1890/10008]  eta: 0:36:42  lr: 0.000001  loss: 6.8344 (6.8500)  time: 0.2509  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1900/10008]  eta: 0:36:38  lr: 0.000001  loss: 6.8344 (6.8501)  time: 0.2523  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1910/10008]  eta: 0:36:35  lr: 0.000001  loss: 6.8337 (6.8499)  time: 0.2542  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1920/10008]  eta: 0:36:32  lr: 0.000001  loss: 6.8371 (6.8500)  time: 0.2528  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1930/10008]  eta: 0:36:29  lr: 0.000001  loss: 6.8393 (6.8499)  time: 0.2593  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1940/10008]  eta: 0:36:25  lr: 0.000001  loss: 6.8291 (6.8497)  time: 0.2609  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 1950/10008]  eta: 0:36:22  lr: 0.000001  loss: 6.8345 (6.8498)  time: 0.2601  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 1960/10008]  eta: 0:36:19  lr: 0.000001  loss: 6.8410 (6.8497)  time: 0.2587  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1970/10008]  eta: 0:36:16  lr: 0.000001  loss: 6.8426 (6.8496)  time: 0.2535  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1980/10008]  eta: 0:36:12  lr: 0.000001  loss: 6.8426 (6.8496)  time: 0.2535  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 1990/10008]  eta: 0:36:08  lr: 0.000001  loss: 6.8422 (6.8496)  time: 0.2500  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2000/10008]  eta: 0:36:05  lr: 0.000001  loss: 6.8369 (6.8495)  time: 0.2513  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2010/10008]  eta: 0:36:02  lr: 0.000001  loss: 6.8603 (6.8497)  time: 0.2570  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2020/10008]  eta: 0:35:59  lr: 0.000001  loss: 6.8525 (6.8496)  time: 0.2597  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2030/10008]  eta: 0:35:55  lr: 0.000001  loss: 6.8371 (6.8496)  time: 0.2561  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2040/10008]  eta: 0:35:52  lr: 0.000001  loss: 6.8464 (6.8496)  time: 0.2561  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2050/10008]  eta: 0:35:49  lr: 0.000001  loss: 6.8501 (6.8496)  time: 0.2539  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2060/10008]  eta: 0:35:45  lr: 0.000001  loss: 6.8588 (6.8496)  time: 0.2498  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2070/10008]  eta: 0:35:42  lr: 0.000001  loss: 6.8603 (6.8497)  time: 0.2552  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2080/10008]  eta: 0:35:39  lr: 0.000001  loss: 6.8628 (6.8497)  time: 0.2592  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2090/10008]  eta: 0:35:37  lr: 0.000001  loss: 6.8524 (6.8497)  time: 0.2676  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 2100/10008]  eta: 0:35:34  lr: 0.000001  loss: 6.8374 (6.8496)  time: 0.2764  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2110/10008]  eta: 0:35:31  lr: 0.000001  loss: 6.8444 (6.8496)  time: 0.2640  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2120/10008]  eta: 0:35:27  lr: 0.000001  loss: 6.8456 (6.8496)  time: 0.2521  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2130/10008]  eta: 0:35:24  lr: 0.000001  loss: 6.8483 (6.8496)  time: 0.2523  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2140/10008]  eta: 0:35:21  lr: 0.000001  loss: 6.8451 (6.8496)  time: 0.2525  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2150/10008]  eta: 0:35:19  lr: 0.000001  loss: 6.8355 (6.8495)  time: 0.2669  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2160/10008]  eta: 0:35:16  lr: 0.000001  loss: 6.8291 (6.8494)  time: 0.2719  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2170/10008]  eta: 0:35:12  lr: 0.000001  loss: 6.8382 (6.8494)  time: 0.2569  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2180/10008]  eta: 0:35:09  lr: 0.000001  loss: 6.8382 (6.8494)  time: 0.2589  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2190/10008]  eta: 0:35:06  lr: 0.000001  loss: 6.8549 (6.8495)  time: 0.2572  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2200/10008]  eta: 0:35:03  lr: 0.000001  loss: 6.8549 (6.8494)  time: 0.2595  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2210/10008]  eta: 0:35:01  lr: 0.000001  loss: 6.8395 (6.8494)  time: 0.2762  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2220/10008]  eta: 0:34:58  lr: 0.000001  loss: 6.8429 (6.8493)  time: 0.2740  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2230/10008]  eta: 0:34:55  lr: 0.000001  loss: 6.8442 (6.8493)  time: 0.2598  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2240/10008]  eta: 0:34:52  lr: 0.000001  loss: 6.8369 (6.8492)  time: 0.2525  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2250/10008]  eta: 0:34:49  lr: 0.000001  loss: 6.8387 (6.8493)  time: 0.2595  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2260/10008]  eta: 0:34:46  lr: 0.000001  loss: 6.8479 (6.8493)  time: 0.2599  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2270/10008]  eta: 0:34:42  lr: 0.000001  loss: 6.8395 (6.8492)  time: 0.2529  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2280/10008]  eta: 0:34:39  lr: 0.000001  loss: 6.8535 (6.8493)  time: 0.2530  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2290/10008]  eta: 0:34:36  lr: 0.000001  loss: 6.8501 (6.8493)  time: 0.2536  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2300/10008]  eta: 0:34:33  lr: 0.000001  loss: 6.8496 (6.8493)  time: 0.2584  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2310/10008]  eta: 0:34:30  lr: 0.000001  loss: 6.8530 (6.8494)  time: 0.2579  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2320/10008]  eta: 0:34:27  lr: 0.000001  loss: 6.8530 (6.8494)  time: 0.2516  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2330/10008]  eta: 0:34:23  lr: 0.000001  loss: 6.8471 (6.8493)  time: 0.2539  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2340/10008]  eta: 0:34:20  lr: 0.000001  loss: 6.8493 (6.8493)  time: 0.2578  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2350/10008]  eta: 0:34:17  lr: 0.000001  loss: 6.8574 (6.8494)  time: 0.2541  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2360/10008]  eta: 0:34:14  lr: 0.000001  loss: 6.8439 (6.8493)  time: 0.2583  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2370/10008]  eta: 0:34:11  lr: 0.000001  loss: 6.8167 (6.8491)  time: 0.2626  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2380/10008]  eta: 0:34:08  lr: 0.000001  loss: 6.8245 (6.8491)  time: 0.2573  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2390/10008]  eta: 0:34:05  lr: 0.000001  loss: 6.8281 (6.8490)  time: 0.2576  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2400/10008]  eta: 0:34:03  lr: 0.000001  loss: 6.8474 (6.8490)  time: 0.2685  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2410/10008]  eta: 0:34:00  lr: 0.000001  loss: 6.8519 (6.8491)  time: 0.2762  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2420/10008]  eta: 0:33:58  lr: 0.000001  loss: 6.8413 (6.8490)  time: 0.2760  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2430/10008]  eta: 0:33:55  lr: 0.000001  loss: 6.8356 (6.8490)  time: 0.2743  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2440/10008]  eta: 0:33:52  lr: 0.000001  loss: 6.8377 (6.8490)  time: 0.2601  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2450/10008]  eta: 0:33:49  lr: 0.000001  loss: 6.8379 (6.8490)  time: 0.2490  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2460/10008]  eta: 0:33:45  lr: 0.000001  loss: 6.8402 (6.8489)  time: 0.2468  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2470/10008]  eta: 0:33:42  lr: 0.000001  loss: 6.8500 (6.8489)  time: 0.2497  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2480/10008]  eta: 0:33:39  lr: 0.000001  loss: 6.8488 (6.8489)  time: 0.2564  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2490/10008]  eta: 0:33:37  lr: 0.000001  loss: 6.8508 (6.8489)  time: 0.2671  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2500/10008]  eta: 0:33:34  lr: 0.000001  loss: 6.8502 (6.8489)  time: 0.2763  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2510/10008]  eta: 0:33:32  lr: 0.000001  loss: 6.8400 (6.8488)  time: 0.2751  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2520/10008]  eta: 0:33:29  lr: 0.000001  loss: 6.8400 (6.8488)  time: 0.2746  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2530/10008]  eta: 0:33:27  lr: 0.000001  loss: 6.8544 (6.8489)  time: 0.2721  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2540/10008]  eta: 0:33:24  lr: 0.000001  loss: 6.8538 (6.8489)  time: 0.2648  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2550/10008]  eta: 0:33:22  lr: 0.000001  loss: 6.8538 (6.8489)  time: 0.2741  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2560/10008]  eta: 0:33:19  lr: 0.000001  loss: 6.8633 (6.8489)  time: 0.2827  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2570/10008]  eta: 0:33:17  lr: 0.000001  loss: 6.8720 (6.8490)  time: 0.2714  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2580/10008]  eta: 0:33:13  lr: 0.000001  loss: 6.8675 (6.8491)  time: 0.2582  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2590/10008]  eta: 0:33:10  lr: 0.000001  loss: 6.8380 (6.8490)  time: 0.2499  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2600/10008]  eta: 0:33:07  lr: 0.000001  loss: 6.8380 (6.8490)  time: 0.2566  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2610/10008]  eta: 0:33:05  lr: 0.000001  loss: 6.8482 (6.8489)  time: 0.2718  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 2620/10008]  eta: 0:33:03  lr: 0.000001  loss: 6.8524 (6.8490)  time: 0.2794  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2630/10008]  eta: 0:33:00  lr: 0.000001  loss: 6.8235 (6.8489)  time: 0.2721  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2640/10008]  eta: 0:32:57  lr: 0.000001  loss: 6.8351 (6.8489)  time: 0.2572  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 2650/10008]  eta: 0:32:53  lr: 0.000001  loss: 6.8545 (6.8489)  time: 0.2493  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2660/10008]  eta: 0:32:50  lr: 0.000001  loss: 6.8400 (6.8488)  time: 0.2491  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2670/10008]  eta: 0:32:47  lr: 0.000001  loss: 6.8227 (6.8487)  time: 0.2493  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2680/10008]  eta: 0:32:44  lr: 0.000001  loss: 6.8313 (6.8487)  time: 0.2490  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2690/10008]  eta: 0:32:41  lr: 0.000001  loss: 6.8294 (6.8486)  time: 0.2491  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2700/10008]  eta: 0:32:37  lr: 0.000001  loss: 6.8294 (6.8486)  time: 0.2495  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2710/10008]  eta: 0:32:34  lr: 0.000001  loss: 6.8568 (6.8486)  time: 0.2490  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2720/10008]  eta: 0:32:31  lr: 0.000001  loss: 6.8568 (6.8486)  time: 0.2492  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2730/10008]  eta: 0:32:28  lr: 0.000001  loss: 6.8403 (6.8486)  time: 0.2466  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2740/10008]  eta: 0:32:26  lr: 0.000001  loss: 6.8269 (6.8485)  time: 0.2657  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2750/10008]  eta: 0:32:23  lr: 0.000001  loss: 6.8323 (6.8485)  time: 0.2835  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2760/10008]  eta: 0:32:20  lr: 0.000001  loss: 6.8331 (6.8484)  time: 0.2660  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2770/10008]  eta: 0:32:17  lr: 0.000001  loss: 6.8331 (6.8484)  time: 0.2534  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2780/10008]  eta: 0:32:14  lr: 0.000001  loss: 6.8235 (6.8483)  time: 0.2544  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2790/10008]  eta: 0:32:11  lr: 0.000001  loss: 6.8118 (6.8482)  time: 0.2581  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2800/10008]  eta: 0:32:08  lr: 0.000001  loss: 6.8084 (6.8481)  time: 0.2578  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2810/10008]  eta: 0:32:05  lr: 0.000001  loss: 6.8361 (6.8481)  time: 0.2616  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2820/10008]  eta: 0:32:02  lr: 0.000001  loss: 6.8283 (6.8480)  time: 0.2598  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2830/10008]  eta: 0:32:00  lr: 0.000001  loss: 6.8283 (6.8479)  time: 0.2572  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2840/10008]  eta: 0:31:57  lr: 0.000001  loss: 6.8262 (6.8478)  time: 0.2628  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2850/10008]  eta: 0:31:54  lr: 0.000001  loss: 6.8239 (6.8478)  time: 0.2665  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2860/10008]  eta: 0:31:52  lr: 0.000001  loss: 6.8169 (6.8477)  time: 0.2688  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2870/10008]  eta: 0:31:49  lr: 0.000001  loss: 6.8027 (6.8475)  time: 0.2606  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2880/10008]  eta: 0:31:46  lr: 0.000001  loss: 6.8110 (6.8475)  time: 0.2703  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2890/10008]  eta: 0:31:44  lr: 0.000001  loss: 6.8323 (6.8475)  time: 0.2785  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2900/10008]  eta: 0:31:41  lr: 0.000001  loss: 6.8410 (6.8475)  time: 0.2640  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2910/10008]  eta: 0:31:38  lr: 0.000001  loss: 6.8407 (6.8475)  time: 0.2625  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2920/10008]  eta: 0:31:35  lr: 0.000001  loss: 6.8363 (6.8475)  time: 0.2625  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2930/10008]  eta: 0:31:32  lr: 0.000001  loss: 6.8371 (6.8474)  time: 0.2577  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2940/10008]  eta: 0:31:30  lr: 0.000001  loss: 6.8371 (6.8474)  time: 0.2685  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2950/10008]  eta: 0:31:28  lr: 0.000001  loss: 6.8348 (6.8473)  time: 0.2790  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2960/10008]  eta: 0:31:25  lr: 0.000001  loss: 6.8348 (6.8473)  time: 0.2797  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2970/10008]  eta: 0:31:23  lr: 0.000001  loss: 6.8401 (6.8472)  time: 0.2793  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2980/10008]  eta: 0:31:20  lr: 0.000001  loss: 6.8404 (6.8472)  time: 0.2772  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 2990/10008]  eta: 0:31:17  lr: 0.000001  loss: 6.8418 (6.8471)  time: 0.2669  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3000/10008]  eta: 0:31:15  lr: 0.000001  loss: 6.8517 (6.8472)  time: 0.2602  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3010/10008]  eta: 0:31:12  lr: 0.000001  loss: 6.8572 (6.8472)  time: 0.2604  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3020/10008]  eta: 0:31:09  lr: 0.000001  loss: 6.8523 (6.8471)  time: 0.2571  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3030/10008]  eta: 0:31:06  lr: 0.000001  loss: 6.8422 (6.8471)  time: 0.2540  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3040/10008]  eta: 0:31:03  lr: 0.000001  loss: 6.8343 (6.8471)  time: 0.2526  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3050/10008]  eta: 0:31:00  lr: 0.000001  loss: 6.8456 (6.8471)  time: 0.2528  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3060/10008]  eta: 0:30:57  lr: 0.000001  loss: 6.8382 (6.8471)  time: 0.2618  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3070/10008]  eta: 0:30:54  lr: 0.000001  loss: 6.8343 (6.8470)  time: 0.2632  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3080/10008]  eta: 0:30:51  lr: 0.000001  loss: 6.8346 (6.8470)  time: 0.2536  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3090/10008]  eta: 0:30:48  lr: 0.000001  loss: 6.8316 (6.8469)  time: 0.2518  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3100/10008]  eta: 0:30:45  lr: 0.000001  loss: 6.8328 (6.8469)  time: 0.2517  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3110/10008]  eta: 0:30:42  lr: 0.000001  loss: 6.8457 (6.8469)  time: 0.2560  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3120/10008]  eta: 0:30:40  lr: 0.000001  loss: 6.8457 (6.8469)  time: 0.2631  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3130/10008]  eta: 0:30:36  lr: 0.000001  loss: 6.8575 (6.8469)  time: 0.2565  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 3140/10008]  eta: 0:30:34  lr: 0.000001  loss: 6.8353 (6.8468)  time: 0.2522  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3150/10008]  eta: 0:30:31  lr: 0.000001  loss: 6.8353 (6.8468)  time: 0.2579  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3160/10008]  eta: 0:30:28  lr: 0.000001  loss: 6.8394 (6.8468)  time: 0.2568  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3170/10008]  eta: 0:30:25  lr: 0.000001  loss: 6.8229 (6.8467)  time: 0.2551  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3180/10008]  eta: 0:30:22  lr: 0.000001  loss: 6.8229 (6.8468)  time: 0.2604  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3190/10008]  eta: 0:30:19  lr: 0.000001  loss: 6.8427 (6.8467)  time: 0.2638  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3200/10008]  eta: 0:30:17  lr: 0.000001  loss: 6.8423 (6.8467)  time: 0.2611  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3210/10008]  eta: 0:30:14  lr: 0.000001  loss: 6.8451 (6.8467)  time: 0.2591  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3220/10008]  eta: 0:30:11  lr: 0.000001  loss: 6.8442 (6.8467)  time: 0.2537  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3230/10008]  eta: 0:30:08  lr: 0.000001  loss: 6.8286 (6.8467)  time: 0.2495  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3240/10008]  eta: 0:30:05  lr: 0.000001  loss: 6.8282 (6.8467)  time: 0.2601  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3250/10008]  eta: 0:30:03  lr: 0.000001  loss: 6.8216 (6.8466)  time: 0.2730  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3260/10008]  eta: 0:30:00  lr: 0.000001  loss: 6.8484 (6.8466)  time: 0.2704  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3270/10008]  eta: 0:29:57  lr: 0.000001  loss: 6.8280 (6.8465)  time: 0.2567  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3280/10008]  eta: 0:29:54  lr: 0.000001  loss: 6.8177 (6.8465)  time: 0.2641  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3290/10008]  eta: 0:29:52  lr: 0.000001  loss: 6.8246 (6.8465)  time: 0.2807  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3300/10008]  eta: 0:29:50  lr: 0.000001  loss: 6.8304 (6.8464)  time: 0.2786  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3310/10008]  eta: 0:29:47  lr: 0.000001  loss: 6.8342 (6.8464)  time: 0.2756  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3320/10008]  eta: 0:29:44  lr: 0.000001  loss: 6.8426 (6.8464)  time: 0.2728  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3330/10008]  eta: 0:29:42  lr: 0.000001  loss: 6.8262 (6.8463)  time: 0.2734  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3340/10008]  eta: 0:29:40  lr: 0.000001  loss: 6.8167 (6.8463)  time: 0.2767  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3350/10008]  eta: 0:29:37  lr: 0.000001  loss: 6.8272 (6.8463)  time: 0.2769  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3360/10008]  eta: 0:29:34  lr: 0.000001  loss: 6.8459 (6.8463)  time: 0.2708  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3370/10008]  eta: 0:29:31  lr: 0.000001  loss: 6.8312 (6.8462)  time: 0.2588  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3380/10008]  eta: 0:29:28  lr: 0.000001  loss: 6.8312 (6.8461)  time: 0.2537  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3390/10008]  eta: 0:29:26  lr: 0.000001  loss: 6.8320 (6.8461)  time: 0.2632  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3400/10008]  eta: 0:29:23  lr: 0.000001  loss: 6.8306 (6.8461)  time: 0.2728  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3410/10008]  eta: 0:29:21  lr: 0.000001  loss: 6.8416 (6.8461)  time: 0.2778  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 3420/10008]  eta: 0:29:19  lr: 0.000001  loss: 6.8401 (6.8461)  time: 0.2798  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3430/10008]  eta: 0:29:16  lr: 0.000001  loss: 6.8367 (6.8460)  time: 0.2777  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3440/10008]  eta: 0:29:14  lr: 0.000001  loss: 6.8385 (6.8460)  time: 0.2772  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3450/10008]  eta: 0:29:11  lr: 0.000001  loss: 6.8356 (6.8460)  time: 0.2823  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3460/10008]  eta: 0:29:09  lr: 0.000001  loss: 6.8324 (6.8460)  time: 0.2831  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3470/10008]  eta: 0:29:06  lr: 0.000001  loss: 6.8431 (6.8460)  time: 0.2698  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3480/10008]  eta: 0:29:03  lr: 0.000001  loss: 6.8343 (6.8460)  time: 0.2570  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3490/10008]  eta: 0:29:01  lr: 0.000001  loss: 6.8175 (6.8459)  time: 0.2686  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3500/10008]  eta: 0:28:58  lr: 0.000001  loss: 6.8438 (6.8459)  time: 0.2732  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3510/10008]  eta: 0:28:56  lr: 0.000001  loss: 6.8600 (6.8460)  time: 0.2703  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3520/10008]  eta: 0:28:53  lr: 0.000001  loss: 6.8549 (6.8459)  time: 0.2766  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3530/10008]  eta: 0:28:50  lr: 0.000001  loss: 6.8373 (6.8459)  time: 0.2642  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3540/10008]  eta: 0:28:47  lr: 0.000001  loss: 6.8347 (6.8459)  time: 0.2606  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3550/10008]  eta: 0:28:45  lr: 0.000001  loss: 6.8258 (6.8459)  time: 0.2734  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3560/10008]  eta: 0:28:42  lr: 0.000001  loss: 6.8336 (6.8458)  time: 0.2772  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3570/10008]  eta: 0:28:40  lr: 0.000001  loss: 6.8336 (6.8457)  time: 0.2649  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3580/10008]  eta: 0:28:37  lr: 0.000001  loss: 6.8379 (6.8457)  time: 0.2532  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3590/10008]  eta: 0:28:34  lr: 0.000001  loss: 6.8499 (6.8457)  time: 0.2564  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3600/10008]  eta: 0:28:31  lr: 0.000001  loss: 6.8415 (6.8457)  time: 0.2553  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3610/10008]  eta: 0:28:28  lr: 0.000001  loss: 6.8415 (6.8457)  time: 0.2515  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3620/10008]  eta: 0:28:25  lr: 0.000001  loss: 6.8426 (6.8457)  time: 0.2590  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3630/10008]  eta: 0:28:22  lr: 0.000001  loss: 6.8574 (6.8457)  time: 0.2596  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3640/10008]  eta: 0:28:19  lr: 0.000001  loss: 6.8615 (6.8457)  time: 0.2522  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3650/10008]  eta: 0:28:16  lr: 0.000001  loss: 6.8352 (6.8458)  time: 0.2492  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3660/10008]  eta: 0:28:13  lr: 0.000001  loss: 6.8501 (6.8457)  time: 0.2480  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3670/10008]  eta: 0:28:10  lr: 0.000001  loss: 6.8443 (6.8457)  time: 0.2485  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3680/10008]  eta: 0:28:08  lr: 0.000001  loss: 6.8456 (6.8457)  time: 0.2595  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3690/10008]  eta: 0:28:05  lr: 0.000001  loss: 6.8456 (6.8457)  time: 0.2750  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3700/10008]  eta: 0:28:03  lr: 0.000001  loss: 6.8505 (6.8457)  time: 0.2850  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3710/10008]  eta: 0:28:01  lr: 0.000001  loss: 6.8426 (6.8457)  time: 0.2835  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3720/10008]  eta: 0:27:58  lr: 0.000001  loss: 6.8429 (6.8457)  time: 0.2770  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3730/10008]  eta: 0:27:55  lr: 0.000001  loss: 6.8458 (6.8457)  time: 0.2669  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3740/10008]  eta: 0:27:52  lr: 0.000001  loss: 6.8465 (6.8457)  time: 0.2531  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3750/10008]  eta: 0:27:49  lr: 0.000001  loss: 6.8430 (6.8457)  time: 0.2494  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3760/10008]  eta: 0:27:46  lr: 0.000001  loss: 6.8420 (6.8457)  time: 0.2509  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3770/10008]  eta: 0:27:44  lr: 0.000001  loss: 6.8430 (6.8457)  time: 0.2590  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3780/10008]  eta: 0:27:41  lr: 0.000001  loss: 6.8458 (6.8457)  time: 0.2576  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3790/10008]  eta: 0:27:38  lr: 0.000001  loss: 6.8445 (6.8457)  time: 0.2492  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3800/10008]  eta: 0:27:35  lr: 0.000001  loss: 6.8355 (6.8457)  time: 0.2587  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3810/10008]  eta: 0:27:32  lr: 0.000001  loss: 6.8341 (6.8457)  time: 0.2667  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3820/10008]  eta: 0:27:30  lr: 0.000001  loss: 6.8429 (6.8456)  time: 0.2579  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3830/10008]  eta: 0:27:27  lr: 0.000001  loss: 6.8429 (6.8456)  time: 0.2551  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3840/10008]  eta: 0:27:24  lr: 0.000001  loss: 6.8220 (6.8456)  time: 0.2642  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3850/10008]  eta: 0:27:21  lr: 0.000001  loss: 6.8217 (6.8456)  time: 0.2607  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3860/10008]  eta: 0:27:18  lr: 0.000001  loss: 6.8404 (6.8455)  time: 0.2523  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3870/10008]  eta: 0:27:16  lr: 0.000001  loss: 6.8524 (6.8455)  time: 0.2586  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3880/10008]  eta: 0:27:13  lr: 0.000001  loss: 6.8270 (6.8455)  time: 0.2646  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3890/10008]  eta: 0:27:10  lr: 0.000001  loss: 6.8263 (6.8454)  time: 0.2575  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3900/10008]  eta: 0:27:07  lr: 0.000001  loss: 6.8263 (6.8454)  time: 0.2613  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3910/10008]  eta: 0:27:05  lr: 0.000001  loss: 6.8345 (6.8454)  time: 0.2618  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3920/10008]  eta: 0:27:02  lr: 0.000001  loss: 6.8308 (6.8453)  time: 0.2520  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3930/10008]  eta: 0:26:59  lr: 0.000001  loss: 6.8390 (6.8453)  time: 0.2528  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3940/10008]  eta: 0:26:56  lr: 0.000001  loss: 6.8489 (6.8452)  time: 0.2537  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3950/10008]  eta: 0:26:53  lr: 0.000001  loss: 6.8228 (6.8452)  time: 0.2513  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 3960/10008]  eta: 0:26:50  lr: 0.000001  loss: 6.8228 (6.8451)  time: 0.2621  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 3970/10008]  eta: 0:26:48  lr: 0.000001  loss: 6.8432 (6.8452)  time: 0.2773  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 3980/10008]  eta: 0:26:45  lr: 0.000001  loss: 6.8472 (6.8452)  time: 0.2740  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 3990/10008]  eta: 0:26:42  lr: 0.000001  loss: 6.8416 (6.8452)  time: 0.2599  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4000/10008]  eta: 0:26:40  lr: 0.000001  loss: 6.8425 (6.8451)  time: 0.2547  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4010/10008]  eta: 0:26:37  lr: 0.000001  loss: 6.8162 (6.8451)  time: 0.2541  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4020/10008]  eta: 0:26:34  lr: 0.000001  loss: 6.8098 (6.8450)  time: 0.2536  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4030/10008]  eta: 0:26:31  lr: 0.000001  loss: 6.8315 (6.8449)  time: 0.2662  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4040/10008]  eta: 0:26:29  lr: 0.000001  loss: 6.8263 (6.8449)  time: 0.2657  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4050/10008]  eta: 0:26:26  lr: 0.000001  loss: 6.8335 (6.8449)  time: 0.2538  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4060/10008]  eta: 0:26:23  lr: 0.000001  loss: 6.8375 (6.8448)  time: 0.2511  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4070/10008]  eta: 0:26:20  lr: 0.000001  loss: 6.8039 (6.8447)  time: 0.2579  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4080/10008]  eta: 0:26:18  lr: 0.000001  loss: 6.8022 (6.8447)  time: 0.2695  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4090/10008]  eta: 0:26:15  lr: 0.000001  loss: 6.8409 (6.8447)  time: 0.2697  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4100/10008]  eta: 0:26:13  lr: 0.000001  loss: 6.8368 (6.8446)  time: 0.2737  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4110/10008]  eta: 0:26:10  lr: 0.000001  loss: 6.8345 (6.8446)  time: 0.2819  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4120/10008]  eta: 0:26:07  lr: 0.000001  loss: 6.8173 (6.8445)  time: 0.2715  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4130/10008]  eta: 0:26:04  lr: 0.000001  loss: 6.8272 (6.8445)  time: 0.2559  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4140/10008]  eta: 0:26:02  lr: 0.000001  loss: 6.8272 (6.8445)  time: 0.2504  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4150/10008]  eta: 0:25:59  lr: 0.000001  loss: 6.8262 (6.8444)  time: 0.2600  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4160/10008]  eta: 0:25:56  lr: 0.000001  loss: 6.8329 (6.8444)  time: 0.2732  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4170/10008]  eta: 0:25:54  lr: 0.000001  loss: 6.8391 (6.8444)  time: 0.2663  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4180/10008]  eta: 0:25:51  lr: 0.000001  loss: 6.8387 (6.8443)  time: 0.2538  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4190/10008]  eta: 0:25:48  lr: 0.000001  loss: 6.8298 (6.8443)  time: 0.2506  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4200/10008]  eta: 0:25:45  lr: 0.000001  loss: 6.8107 (6.8442)  time: 0.2497  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4210/10008]  eta: 0:25:42  lr: 0.000001  loss: 6.8065 (6.8441)  time: 0.2575  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4220/10008]  eta: 0:25:40  lr: 0.000001  loss: 6.8364 (6.8441)  time: 0.2644  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4230/10008]  eta: 0:25:37  lr: 0.000001  loss: 6.8370 (6.8441)  time: 0.2655  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4240/10008]  eta: 0:25:35  lr: 0.000001  loss: 6.8429 (6.8441)  time: 0.2739  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4250/10008]  eta: 0:25:32  lr: 0.000001  loss: 6.8611 (6.8441)  time: 0.2800  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4260/10008]  eta: 0:25:30  lr: 0.000001  loss: 6.8418 (6.8440)  time: 0.2776  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4270/10008]  eta: 0:25:27  lr: 0.000001  loss: 6.8071 (6.8440)  time: 0.2728  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4280/10008]  eta: 0:25:24  lr: 0.000001  loss: 6.8227 (6.8439)  time: 0.2598  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4290/10008]  eta: 0:25:21  lr: 0.000001  loss: 6.8408 (6.8439)  time: 0.2563  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4300/10008]  eta: 0:25:19  lr: 0.000001  loss: 6.8315 (6.8439)  time: 0.2694  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4310/10008]  eta: 0:25:16  lr: 0.000001  loss: 6.8315 (6.8438)  time: 0.2765  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4320/10008]  eta: 0:25:14  lr: 0.000001  loss: 6.8470 (6.8438)  time: 0.2775  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4330/10008]  eta: 0:25:11  lr: 0.000001  loss: 6.8292 (6.8437)  time: 0.2778  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4340/10008]  eta: 0:25:09  lr: 0.000001  loss: 6.8262 (6.8437)  time: 0.2754  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4350/10008]  eta: 0:25:06  lr: 0.000001  loss: 6.8361 (6.8436)  time: 0.2599  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4360/10008]  eta: 0:25:03  lr: 0.000001  loss: 6.8255 (6.8436)  time: 0.2573  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4370/10008]  eta: 0:25:01  lr: 0.000001  loss: 6.8175 (6.8436)  time: 0.2736  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4380/10008]  eta: 0:24:58  lr: 0.000001  loss: 6.8151 (6.8435)  time: 0.2740  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4390/10008]  eta: 0:24:55  lr: 0.000001  loss: 6.8348 (6.8435)  time: 0.2596  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4400/10008]  eta: 0:24:52  lr: 0.000001  loss: 6.8348 (6.8434)  time: 0.2565  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4410/10008]  eta: 0:24:50  lr: 0.000001  loss: 6.8356 (6.8435)  time: 0.2712  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4420/10008]  eta: 0:24:47  lr: 0.000001  loss: 6.8346 (6.8434)  time: 0.2753  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4430/10008]  eta: 0:24:44  lr: 0.000001  loss: 6.8136 (6.8433)  time: 0.2617  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4440/10008]  eta: 0:24:42  lr: 0.000001  loss: 6.8181 (6.8433)  time: 0.2524  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4450/10008]  eta: 0:24:39  lr: 0.000001  loss: 6.8395 (6.8433)  time: 0.2509  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4460/10008]  eta: 0:24:36  lr: 0.000001  loss: 6.8178 (6.8432)  time: 0.2494  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4470/10008]  eta: 0:24:33  lr: 0.000001  loss: 6.8315 (6.8433)  time: 0.2492  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4480/10008]  eta: 0:24:30  lr: 0.000001  loss: 6.8485 (6.8433)  time: 0.2479  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4490/10008]  eta: 0:24:27  lr: 0.000001  loss: 6.8418 (6.8432)  time: 0.2518  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 4500/10008]  eta: 0:24:25  lr: 0.000001  loss: 6.8378 (6.8432)  time: 0.2704  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4510/10008]  eta: 0:24:22  lr: 0.000001  loss: 6.8346 (6.8432)  time: 0.2823  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4520/10008]  eta: 0:24:20  lr: 0.000001  loss: 6.8284 (6.8431)  time: 0.2792  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4530/10008]  eta: 0:24:17  lr: 0.000001  loss: 6.8400 (6.8432)  time: 0.2735  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4540/10008]  eta: 0:24:15  lr: 0.000001  loss: 6.8400 (6.8431)  time: 0.2737  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4550/10008]  eta: 0:24:12  lr: 0.000001  loss: 6.8093 (6.8430)  time: 0.2786  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4560/10008]  eta: 0:24:10  lr: 0.000001  loss: 6.8260 (6.8430)  time: 0.2757  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4570/10008]  eta: 0:24:07  lr: 0.000001  loss: 6.8388 (6.8430)  time: 0.2630  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4580/10008]  eta: 0:24:04  lr: 0.000001  loss: 6.8423 (6.8429)  time: 0.2626  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4590/10008]  eta: 0:24:02  lr: 0.000001  loss: 6.8271 (6.8429)  time: 0.2746  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4600/10008]  eta: 0:23:59  lr: 0.000001  loss: 6.8271 (6.8429)  time: 0.2773  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4610/10008]  eta: 0:23:57  lr: 0.000001  loss: 6.8259 (6.8429)  time: 0.2752  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4620/10008]  eta: 0:23:54  lr: 0.000001  loss: 6.8331 (6.8429)  time: 0.2673  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4630/10008]  eta: 0:23:51  lr: 0.000001  loss: 6.8397 (6.8429)  time: 0.2680  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4640/10008]  eta: 0:23:49  lr: 0.000001  loss: 6.8323 (6.8428)  time: 0.2752  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4650/10008]  eta: 0:23:46  lr: 0.000001  loss: 6.8212 (6.8428)  time: 0.2699  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4660/10008]  eta: 0:23:44  lr: 0.000001  loss: 6.8424 (6.8428)  time: 0.2744  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4670/10008]  eta: 0:23:41  lr: 0.000001  loss: 6.8400 (6.8428)  time: 0.2875  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4680/10008]  eta: 0:23:39  lr: 0.000001  loss: 6.8479 (6.8428)  time: 0.2868  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4690/10008]  eta: 0:23:36  lr: 0.000001  loss: 6.8492 (6.8428)  time: 0.2792  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4700/10008]  eta: 0:23:34  lr: 0.000001  loss: 6.8452 (6.8428)  time: 0.2753  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4710/10008]  eta: 0:23:31  lr: 0.000001  loss: 6.8292 (6.8427)  time: 0.2758  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4720/10008]  eta: 0:23:29  lr: 0.000001  loss: 6.8171 (6.8427)  time: 0.2776  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4730/10008]  eta: 0:23:26  lr: 0.000001  loss: 6.8155 (6.8427)  time: 0.2765  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4740/10008]  eta: 0:23:23  lr: 0.000001  loss: 6.8268 (6.8427)  time: 0.2732  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4750/10008]  eta: 0:23:21  lr: 0.000001  loss: 6.8268 (6.8426)  time: 0.2759  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4760/10008]  eta: 0:23:18  lr: 0.000001  loss: 6.8140 (6.8425)  time: 0.2796  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4770/10008]  eta: 0:23:16  lr: 0.000001  loss: 6.8099 (6.8425)  time: 0.2774  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4780/10008]  eta: 0:23:13  lr: 0.000001  loss: 6.8310 (6.8425)  time: 0.2764  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4790/10008]  eta: 0:23:11  lr: 0.000001  loss: 6.8310 (6.8425)  time: 0.2777  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4800/10008]  eta: 0:23:08  lr: 0.000001  loss: 6.8248 (6.8425)  time: 0.2634  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4810/10008]  eta: 0:23:05  lr: 0.000001  loss: 6.8212 (6.8424)  time: 0.2541  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4820/10008]  eta: 0:23:03  lr: 0.000001  loss: 6.8248 (6.8424)  time: 0.2674  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4830/10008]  eta: 0:23:00  lr: 0.000001  loss: 6.8097 (6.8423)  time: 0.2760  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4840/10008]  eta: 0:22:57  lr: 0.000001  loss: 6.8118 (6.8423)  time: 0.2758  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4850/10008]  eta: 0:22:55  lr: 0.000001  loss: 6.8394 (6.8423)  time: 0.2782  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4860/10008]  eta: 0:22:52  lr: 0.000001  loss: 6.8231 (6.8422)  time: 0.2742  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4870/10008]  eta: 0:22:49  lr: 0.000001  loss: 6.8231 (6.8421)  time: 0.2604  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4880/10008]  eta: 0:22:47  lr: 0.000001  loss: 6.8348 (6.8421)  time: 0.2557  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4890/10008]  eta: 0:22:44  lr: 0.000001  loss: 6.8369 (6.8421)  time: 0.2561  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 4900/10008]  eta: 0:22:41  lr: 0.000001  loss: 6.8341 (6.8421)  time: 0.2524  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4910/10008]  eta: 0:22:38  lr: 0.000001  loss: 6.8195 (6.8420)  time: 0.2504  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4920/10008]  eta: 0:22:35  lr: 0.000001  loss: 6.8195 (6.8420)  time: 0.2501  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4930/10008]  eta: 0:22:33  lr: 0.000001  loss: 6.8182 (6.8419)  time: 0.2500  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4940/10008]  eta: 0:22:30  lr: 0.000001  loss: 6.8363 (6.8419)  time: 0.2503  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4950/10008]  eta: 0:22:27  lr: 0.000001  loss: 6.8476 (6.8419)  time: 0.2509  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4960/10008]  eta: 0:22:24  lr: 0.000001  loss: 6.8264 (6.8419)  time: 0.2513  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4970/10008]  eta: 0:22:21  lr: 0.000001  loss: 6.8256 (6.8418)  time: 0.2521  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 4980/10008]  eta: 0:22:19  lr: 0.000001  loss: 6.8467 (6.8418)  time: 0.2615  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 4990/10008]  eta: 0:22:16  lr: 0.000001  loss: 6.8402 (6.8418)  time: 0.2777  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5000/10008]  eta: 0:22:14  lr: 0.000001  loss: 6.8366 (6.8418)  time: 0.2789  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5010/10008]  eta: 0:22:11  lr: 0.000001  loss: 6.8273 (6.8418)  time: 0.2603  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5020/10008]  eta: 0:22:08  lr: 0.000001  loss: 6.8223 (6.8418)  time: 0.2567  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5030/10008]  eta: 0:22:05  lr: 0.000001  loss: 6.8252 (6.8417)  time: 0.2624  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5040/10008]  eta: 0:22:03  lr: 0.000001  loss: 6.8200 (6.8417)  time: 0.2579  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5050/10008]  eta: 0:22:00  lr: 0.000001  loss: 6.8190 (6.8416)  time: 0.2572  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5060/10008]  eta: 0:21:57  lr: 0.000001  loss: 6.8440 (6.8416)  time: 0.2704  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5070/10008]  eta: 0:21:55  lr: 0.000001  loss: 6.8212 (6.8415)  time: 0.2803  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5080/10008]  eta: 0:21:52  lr: 0.000001  loss: 6.8148 (6.8415)  time: 0.2779  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 5090/10008]  eta: 0:21:50  lr: 0.000001  loss: 6.8266 (6.8415)  time: 0.2781  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 5100/10008]  eta: 0:21:47  lr: 0.000001  loss: 6.8181 (6.8414)  time: 0.2711  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5110/10008]  eta: 0:21:44  lr: 0.000001  loss: 6.8267 (6.8414)  time: 0.2731  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5120/10008]  eta: 0:21:42  lr: 0.000001  loss: 6.8327 (6.8413)  time: 0.2679  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5130/10008]  eta: 0:21:39  lr: 0.000001  loss: 6.8226 (6.8413)  time: 0.2520  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5140/10008]  eta: 0:21:36  lr: 0.000001  loss: 6.8226 (6.8413)  time: 0.2477  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5150/10008]  eta: 0:21:33  lr: 0.000001  loss: 6.8343 (6.8413)  time: 0.2531  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5160/10008]  eta: 0:21:31  lr: 0.000001  loss: 6.8390 (6.8412)  time: 0.2581  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5170/10008]  eta: 0:21:28  lr: 0.000001  loss: 6.8161 (6.8412)  time: 0.2619  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5180/10008]  eta: 0:21:25  lr: 0.000001  loss: 6.8161 (6.8412)  time: 0.2720  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5190/10008]  eta: 0:21:23  lr: 0.000001  loss: 6.8098 (6.8411)  time: 0.2713  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5200/10008]  eta: 0:21:20  lr: 0.000001  loss: 6.8202 (6.8411)  time: 0.2651  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5210/10008]  eta: 0:21:17  lr: 0.000001  loss: 6.8426 (6.8411)  time: 0.2699  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5220/10008]  eta: 0:21:15  lr: 0.000001  loss: 6.8400 (6.8411)  time: 0.2774  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5230/10008]  eta: 0:21:12  lr: 0.000001  loss: 6.8214 (6.8410)  time: 0.2762  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5240/10008]  eta: 0:21:10  lr: 0.000001  loss: 6.8392 (6.8411)  time: 0.2754  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5250/10008]  eta: 0:21:07  lr: 0.000001  loss: 6.8475 (6.8410)  time: 0.2810  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5260/10008]  eta: 0:21:05  lr: 0.000001  loss: 6.8259 (6.8410)  time: 0.2807  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5270/10008]  eta: 0:21:02  lr: 0.000001  loss: 6.8332 (6.8410)  time: 0.2599  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5280/10008]  eta: 0:20:59  lr: 0.000001  loss: 6.8336 (6.8410)  time: 0.2610  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5290/10008]  eta: 0:20:57  lr: 0.000001  loss: 6.8313 (6.8410)  time: 0.2791  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5300/10008]  eta: 0:20:54  lr: 0.000001  loss: 6.8329 (6.8409)  time: 0.2783  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5310/10008]  eta: 0:20:51  lr: 0.000001  loss: 6.8332 (6.8409)  time: 0.2755  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5320/10008]  eta: 0:20:49  lr: 0.000001  loss: 6.8172 (6.8409)  time: 0.2771  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5330/10008]  eta: 0:20:46  lr: 0.000001  loss: 6.8265 (6.8408)  time: 0.2779  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5340/10008]  eta: 0:20:44  lr: 0.000001  loss: 6.8265 (6.8408)  time: 0.2756  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5350/10008]  eta: 0:20:41  lr: 0.000001  loss: 6.8308 (6.8408)  time: 0.2708  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5360/10008]  eta: 0:20:38  lr: 0.000001  loss: 6.8477 (6.8408)  time: 0.2647  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5370/10008]  eta: 0:20:36  lr: 0.000001  loss: 6.8500 (6.8408)  time: 0.2628  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5380/10008]  eta: 0:20:33  lr: 0.000001  loss: 6.8322 (6.8408)  time: 0.2677  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5390/10008]  eta: 0:20:30  lr: 0.000001  loss: 6.8181 (6.8407)  time: 0.2649  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5400/10008]  eta: 0:20:27  lr: 0.000001  loss: 6.8352 (6.8408)  time: 0.2518  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5410/10008]  eta: 0:20:25  lr: 0.000001  loss: 6.8434 (6.8408)  time: 0.2618  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5420/10008]  eta: 0:20:22  lr: 0.000001  loss: 6.8351 (6.8407)  time: 0.2776  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5430/10008]  eta: 0:20:20  lr: 0.000001  loss: 6.8235 (6.8407)  time: 0.2775  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5440/10008]  eta: 0:20:17  lr: 0.000001  loss: 6.8205 (6.8406)  time: 0.2660  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5450/10008]  eta: 0:20:14  lr: 0.000001  loss: 6.8278 (6.8406)  time: 0.2531  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5460/10008]  eta: 0:20:12  lr: 0.000001  loss: 6.8298 (6.8406)  time: 0.2593  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5470/10008]  eta: 0:20:09  lr: 0.000001  loss: 6.8412 (6.8407)  time: 0.2719  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5480/10008]  eta: 0:20:06  lr: 0.000001  loss: 6.8419 (6.8406)  time: 0.2769  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5490/10008]  eta: 0:20:04  lr: 0.000001  loss: 6.8114 (6.8406)  time: 0.2764  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5500/10008]  eta: 0:20:01  lr: 0.000001  loss: 6.8113 (6.8405)  time: 0.2746  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5510/10008]  eta: 0:19:59  lr: 0.000001  loss: 6.8292 (6.8405)  time: 0.2691  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5520/10008]  eta: 0:19:56  lr: 0.000001  loss: 6.8304 (6.8405)  time: 0.2585  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5530/10008]  eta: 0:19:53  lr: 0.000001  loss: 6.8383 (6.8405)  time: 0.2486  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5540/10008]  eta: 0:19:50  lr: 0.000001  loss: 6.8126 (6.8404)  time: 0.2507  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5550/10008]  eta: 0:19:47  lr: 0.000001  loss: 6.8092 (6.8403)  time: 0.2609  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5560/10008]  eta: 0:19:45  lr: 0.000001  loss: 6.8140 (6.8403)  time: 0.2793  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5570/10008]  eta: 0:19:42  lr: 0.000001  loss: 6.8427 (6.8403)  time: 0.2853  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5580/10008]  eta: 0:19:40  lr: 0.000001  loss: 6.8119 (6.8403)  time: 0.2770  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5590/10008]  eta: 0:19:37  lr: 0.000001  loss: 6.8223 (6.8402)  time: 0.2747  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5600/10008]  eta: 0:19:34  lr: 0.000001  loss: 6.8246 (6.8402)  time: 0.2619  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 5610/10008]  eta: 0:19:32  lr: 0.000001  loss: 6.8101 (6.8401)  time: 0.2514  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5620/10008]  eta: 0:19:29  lr: 0.000001  loss: 6.8110 (6.8401)  time: 0.2522  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5630/10008]  eta: 0:19:26  lr: 0.000001  loss: 6.8286 (6.8401)  time: 0.2564  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5640/10008]  eta: 0:19:24  lr: 0.000001  loss: 6.8377 (6.8401)  time: 0.2698  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5650/10008]  eta: 0:19:21  lr: 0.000001  loss: 6.8105 (6.8400)  time: 0.2670  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5660/10008]  eta: 0:19:18  lr: 0.000001  loss: 6.8063 (6.8400)  time: 0.2528  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5670/10008]  eta: 0:19:15  lr: 0.000001  loss: 6.8124 (6.8400)  time: 0.2521  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5680/10008]  eta: 0:19:13  lr: 0.000001  loss: 6.8413 (6.8400)  time: 0.2563  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5690/10008]  eta: 0:19:10  lr: 0.000001  loss: 6.8166 (6.8399)  time: 0.2672  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5700/10008]  eta: 0:19:07  lr: 0.000001  loss: 6.8231 (6.8399)  time: 0.2808  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5710/10008]  eta: 0:19:05  lr: 0.000001  loss: 6.8336 (6.8399)  time: 0.2807  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5720/10008]  eta: 0:19:02  lr: 0.000001  loss: 6.8147 (6.8398)  time: 0.2647  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5730/10008]  eta: 0:18:59  lr: 0.000001  loss: 6.8147 (6.8398)  time: 0.2588  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5740/10008]  eta: 0:18:57  lr: 0.000001  loss: 6.8134 (6.8397)  time: 0.2682  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5750/10008]  eta: 0:18:54  lr: 0.000001  loss: 6.8135 (6.8397)  time: 0.2739  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5760/10008]  eta: 0:18:52  lr: 0.000001  loss: 6.8280 (6.8397)  time: 0.2742  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5770/10008]  eta: 0:18:49  lr: 0.000001  loss: 6.8280 (6.8397)  time: 0.2672  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5780/10008]  eta: 0:18:46  lr: 0.000001  loss: 6.8275 (6.8396)  time: 0.2560  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5790/10008]  eta: 0:18:43  lr: 0.000001  loss: 6.8275 (6.8396)  time: 0.2501  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5800/10008]  eta: 0:18:40  lr: 0.000001  loss: 6.8211 (6.8396)  time: 0.2463  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5810/10008]  eta: 0:18:38  lr: 0.000001  loss: 6.8160 (6.8396)  time: 0.2601  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5820/10008]  eta: 0:18:35  lr: 0.000001  loss: 6.8299 (6.8395)  time: 0.2724  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5830/10008]  eta: 0:18:33  lr: 0.000001  loss: 6.8403 (6.8396)  time: 0.2707  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5840/10008]  eta: 0:18:30  lr: 0.000001  loss: 6.8463 (6.8395)  time: 0.2633  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5850/10008]  eta: 0:18:27  lr: 0.000001  loss: 6.8084 (6.8395)  time: 0.2533  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5860/10008]  eta: 0:18:25  lr: 0.000001  loss: 6.8401 (6.8395)  time: 0.2644  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5870/10008]  eta: 0:18:22  lr: 0.000001  loss: 6.8342 (6.8394)  time: 0.2693  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5880/10008]  eta: 0:18:19  lr: 0.000001  loss: 6.8342 (6.8395)  time: 0.2559  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5890/10008]  eta: 0:18:16  lr: 0.000001  loss: 6.8400 (6.8394)  time: 0.2512  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5900/10008]  eta: 0:18:14  lr: 0.000001  loss: 6.8172 (6.8394)  time: 0.2529  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5910/10008]  eta: 0:18:11  lr: 0.000001  loss: 6.8274 (6.8394)  time: 0.2532  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5920/10008]  eta: 0:18:08  lr: 0.000001  loss: 6.8302 (6.8394)  time: 0.2529  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5930/10008]  eta: 0:18:05  lr: 0.000001  loss: 6.8123 (6.8393)  time: 0.2521  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5940/10008]  eta: 0:18:02  lr: 0.000001  loss: 6.8359 (6.8393)  time: 0.2504  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5950/10008]  eta: 0:18:00  lr: 0.000001  loss: 6.8408 (6.8393)  time: 0.2605  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5960/10008]  eta: 0:17:57  lr: 0.000001  loss: 6.8263 (6.8393)  time: 0.2738  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5970/10008]  eta: 0:17:55  lr: 0.000001  loss: 6.8123 (6.8392)  time: 0.2754  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5980/10008]  eta: 0:17:52  lr: 0.000001  loss: 6.8371 (6.8392)  time: 0.2748  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 5990/10008]  eta: 0:17:49  lr: 0.000001  loss: 6.8371 (6.8392)  time: 0.2627  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6000/10008]  eta: 0:17:47  lr: 0.000001  loss: 6.8134 (6.8392)  time: 0.2621  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6010/10008]  eta: 0:17:44  lr: 0.000001  loss: 6.8335 (6.8392)  time: 0.2759  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6020/10008]  eta: 0:17:42  lr: 0.000001  loss: 6.8475 (6.8392)  time: 0.2781  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 6030/10008]  eta: 0:17:39  lr: 0.000001  loss: 6.8266 (6.8391)  time: 0.2704  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6040/10008]  eta: 0:17:36  lr: 0.000001  loss: 6.8066 (6.8391)  time: 0.2562  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 6050/10008]  eta: 0:17:33  lr: 0.000001  loss: 6.7914 (6.8391)  time: 0.2596  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6060/10008]  eta: 0:17:31  lr: 0.000001  loss: 6.8155 (6.8390)  time: 0.2731  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6070/10008]  eta: 0:17:28  lr: 0.000001  loss: 6.8197 (6.8390)  time: 0.2831  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6080/10008]  eta: 0:17:26  lr: 0.000001  loss: 6.8242 (6.8389)  time: 0.2819  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6090/10008]  eta: 0:17:23  lr: 0.000001  loss: 6.8531 (6.8390)  time: 0.2699  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6100/10008]  eta: 0:17:20  lr: 0.000001  loss: 6.8392 (6.8389)  time: 0.2661  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6110/10008]  eta: 0:17:18  lr: 0.000001  loss: 6.8234 (6.8389)  time: 0.2587  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6120/10008]  eta: 0:17:15  lr: 0.000001  loss: 6.8352 (6.8389)  time: 0.2519  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6130/10008]  eta: 0:17:12  lr: 0.000001  loss: 6.8352 (6.8389)  time: 0.2532  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6140/10008]  eta: 0:17:09  lr: 0.000001  loss: 6.8247 (6.8389)  time: 0.2592  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6150/10008]  eta: 0:17:07  lr: 0.000001  loss: 6.8245 (6.8388)  time: 0.2716  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6160/10008]  eta: 0:17:04  lr: 0.000001  loss: 6.8111 (6.8388)  time: 0.2779  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6170/10008]  eta: 0:17:02  lr: 0.000001  loss: 6.8129 (6.8387)  time: 0.2770  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6180/10008]  eta: 0:16:59  lr: 0.000001  loss: 6.8212 (6.8387)  time: 0.2759  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6190/10008]  eta: 0:16:56  lr: 0.000001  loss: 6.8368 (6.8387)  time: 0.2769  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6200/10008]  eta: 0:16:54  lr: 0.000001  loss: 6.8355 (6.8387)  time: 0.2667  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6210/10008]  eta: 0:16:51  lr: 0.000001  loss: 6.8196 (6.8386)  time: 0.2585  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6220/10008]  eta: 0:16:48  lr: 0.000001  loss: 6.8296 (6.8386)  time: 0.2625  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 6230/10008]  eta: 0:16:46  lr: 0.000001  loss: 6.8322 (6.8386)  time: 0.2708  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6240/10008]  eta: 0:16:43  lr: 0.000001  loss: 6.8321 (6.8386)  time: 0.2767  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6250/10008]  eta: 0:16:41  lr: 0.000001  loss: 6.8100 (6.8386)  time: 0.2761  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6260/10008]  eta: 0:16:38  lr: 0.000001  loss: 6.8100 (6.8385)  time: 0.2829  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6270/10008]  eta: 0:16:35  lr: 0.000001  loss: 6.8276 (6.8385)  time: 0.2815  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6280/10008]  eta: 0:16:33  lr: 0.000001  loss: 6.8390 (6.8385)  time: 0.2749  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6290/10008]  eta: 0:16:30  lr: 0.000001  loss: 6.8220 (6.8385)  time: 0.2690  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6300/10008]  eta: 0:16:27  lr: 0.000001  loss: 6.8311 (6.8385)  time: 0.2697  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6310/10008]  eta: 0:16:25  lr: 0.000001  loss: 6.8358 (6.8385)  time: 0.2806  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6320/10008]  eta: 0:16:22  lr: 0.000001  loss: 6.8283 (6.8385)  time: 0.2802  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6330/10008]  eta: 0:16:20  lr: 0.000001  loss: 6.8079 (6.8384)  time: 0.2760  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6340/10008]  eta: 0:16:17  lr: 0.000001  loss: 6.8019 (6.8384)  time: 0.2743  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6350/10008]  eta: 0:16:14  lr: 0.000001  loss: 6.8164 (6.8384)  time: 0.2599  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6360/10008]  eta: 0:16:12  lr: 0.000001  loss: 6.8136 (6.8384)  time: 0.2478  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6370/10008]  eta: 0:16:09  lr: 0.000001  loss: 6.8240 (6.8383)  time: 0.2530  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6380/10008]  eta: 0:16:06  lr: 0.000001  loss: 6.8309 (6.8383)  time: 0.2711  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6390/10008]  eta: 0:16:04  lr: 0.000001  loss: 6.8140 (6.8383)  time: 0.2827  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6400/10008]  eta: 0:16:01  lr: 0.000001  loss: 6.8187 (6.8383)  time: 0.2851  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6410/10008]  eta: 0:15:59  lr: 0.000001  loss: 6.8194 (6.8382)  time: 0.2806  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6420/10008]  eta: 0:15:56  lr: 0.000001  loss: 6.8401 (6.8382)  time: 0.2620  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6430/10008]  eta: 0:15:53  lr: 0.000001  loss: 6.8300 (6.8382)  time: 0.2523  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6440/10008]  eta: 0:15:50  lr: 0.000001  loss: 6.8265 (6.8382)  time: 0.2524  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6450/10008]  eta: 0:15:48  lr: 0.000001  loss: 6.8243 (6.8382)  time: 0.2631  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6460/10008]  eta: 0:15:45  lr: 0.000001  loss: 6.8047 (6.8381)  time: 0.2619  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6470/10008]  eta: 0:15:42  lr: 0.000001  loss: 6.7923 (6.8380)  time: 0.2503  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6480/10008]  eta: 0:15:39  lr: 0.000001  loss: 6.8046 (6.8380)  time: 0.2518  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6490/10008]  eta: 0:15:37  lr: 0.000001  loss: 6.8261 (6.8380)  time: 0.2513  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6500/10008]  eta: 0:15:34  lr: 0.000001  loss: 6.8242 (6.8379)  time: 0.2523  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6510/10008]  eta: 0:15:31  lr: 0.000001  loss: 6.8283 (6.8380)  time: 0.2735  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6520/10008]  eta: 0:15:29  lr: 0.000001  loss: 6.8347 (6.8379)  time: 0.2785  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6530/10008]  eta: 0:15:26  lr: 0.000001  loss: 6.8142 (6.8379)  time: 0.2625  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6540/10008]  eta: 0:15:23  lr: 0.000001  loss: 6.8517 (6.8379)  time: 0.2688  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6550/10008]  eta: 0:15:21  lr: 0.000001  loss: 6.8517 (6.8379)  time: 0.2775  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6560/10008]  eta: 0:15:18  lr: 0.000001  loss: 6.8247 (6.8378)  time: 0.2799  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6570/10008]  eta: 0:15:16  lr: 0.000001  loss: 6.8202 (6.8378)  time: 0.2785  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6580/10008]  eta: 0:15:13  lr: 0.000001  loss: 6.8328 (6.8378)  time: 0.2708  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6590/10008]  eta: 0:15:10  lr: 0.000001  loss: 6.8280 (6.8378)  time: 0.2723  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6600/10008]  eta: 0:15:08  lr: 0.000001  loss: 6.8156 (6.8377)  time: 0.2769  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6610/10008]  eta: 0:15:05  lr: 0.000001  loss: 6.8098 (6.8377)  time: 0.2631  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6620/10008]  eta: 0:15:02  lr: 0.000001  loss: 6.8300 (6.8377)  time: 0.2517  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6630/10008]  eta: 0:15:00  lr: 0.000001  loss: 6.8151 (6.8377)  time: 0.2624  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6640/10008]  eta: 0:14:57  lr: 0.000001  loss: 6.8132 (6.8377)  time: 0.2703  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6650/10008]  eta: 0:14:54  lr: 0.000001  loss: 6.8132 (6.8376)  time: 0.2621  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6660/10008]  eta: 0:14:52  lr: 0.000001  loss: 6.8134 (6.8376)  time: 0.2653  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6670/10008]  eta: 0:14:49  lr: 0.000001  loss: 6.8134 (6.8376)  time: 0.2742  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6680/10008]  eta: 0:14:46  lr: 0.000001  loss: 6.8047 (6.8375)  time: 0.2631  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6690/10008]  eta: 0:14:44  lr: 0.000001  loss: 6.8047 (6.8375)  time: 0.2518  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6700/10008]  eta: 0:14:41  lr: 0.000001  loss: 6.8229 (6.8375)  time: 0.2535  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6710/10008]  eta: 0:14:38  lr: 0.000001  loss: 6.8124 (6.8374)  time: 0.2549  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6720/10008]  eta: 0:14:35  lr: 0.000001  loss: 6.8255 (6.8374)  time: 0.2550  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6730/10008]  eta: 0:14:33  lr: 0.000001  loss: 6.8401 (6.8374)  time: 0.2666  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6740/10008]  eta: 0:14:30  lr: 0.000001  loss: 6.8154 (6.8374)  time: 0.2754  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6750/10008]  eta: 0:14:27  lr: 0.000001  loss: 6.7997 (6.8373)  time: 0.2708  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6760/10008]  eta: 0:14:25  lr: 0.000001  loss: 6.8185 (6.8373)  time: 0.2667  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6770/10008]  eta: 0:14:22  lr: 0.000001  loss: 6.8185 (6.8373)  time: 0.2771  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 6780/10008]  eta: 0:14:20  lr: 0.000001  loss: 6.8172 (6.8372)  time: 0.2847  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 6790/10008]  eta: 0:14:17  lr: 0.000001  loss: 6.8188 (6.8372)  time: 0.2807  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6800/10008]  eta: 0:14:14  lr: 0.000001  loss: 6.8188 (6.8372)  time: 0.2792  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6810/10008]  eta: 0:14:12  lr: 0.000001  loss: 6.8245 (6.8372)  time: 0.2775  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6820/10008]  eta: 0:14:09  lr: 0.000001  loss: 6.8172 (6.8371)  time: 0.2761  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6830/10008]  eta: 0:14:07  lr: 0.000001  loss: 6.8172 (6.8371)  time: 0.2748  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6840/10008]  eta: 0:14:04  lr: 0.000001  loss: 6.8157 (6.8371)  time: 0.2691  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6850/10008]  eta: 0:14:01  lr: 0.000001  loss: 6.8125 (6.8371)  time: 0.2707  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6860/10008]  eta: 0:13:59  lr: 0.000001  loss: 6.8191 (6.8370)  time: 0.2774  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6870/10008]  eta: 0:13:56  lr: 0.000001  loss: 6.8182 (6.8370)  time: 0.2777  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6880/10008]  eta: 0:13:53  lr: 0.000001  loss: 6.8182 (6.8370)  time: 0.2736  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 6890/10008]  eta: 0:13:51  lr: 0.000001  loss: 6.8322 (6.8370)  time: 0.2650  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 6900/10008]  eta: 0:13:48  lr: 0.000001  loss: 6.8279 (6.8369)  time: 0.2633  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6910/10008]  eta: 0:13:45  lr: 0.000001  loss: 6.8243 (6.8369)  time: 0.2734  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6920/10008]  eta: 0:13:43  lr: 0.000001  loss: 6.7970 (6.8369)  time: 0.2791  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6930/10008]  eta: 0:13:40  lr: 0.000001  loss: 6.8085 (6.8369)  time: 0.2787  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6940/10008]  eta: 0:13:38  lr: 0.000001  loss: 6.8272 (6.8369)  time: 0.2788  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6950/10008]  eta: 0:13:35  lr: 0.000001  loss: 6.8307 (6.8368)  time: 0.2763  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6960/10008]  eta: 0:13:32  lr: 0.000001  loss: 6.8112 (6.8368)  time: 0.2705  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6970/10008]  eta: 0:13:30  lr: 0.000001  loss: 6.8257 (6.8368)  time: 0.2601  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6980/10008]  eta: 0:13:27  lr: 0.000001  loss: 6.8298 (6.8368)  time: 0.2538  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 6990/10008]  eta: 0:13:24  lr: 0.000001  loss: 6.8244 (6.8367)  time: 0.2529  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7000/10008]  eta: 0:13:21  lr: 0.000001  loss: 6.8179 (6.8367)  time: 0.2583  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7010/10008]  eta: 0:13:19  lr: 0.000001  loss: 6.8041 (6.8367)  time: 0.2699  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7020/10008]  eta: 0:13:16  lr: 0.000001  loss: 6.8344 (6.8367)  time: 0.2725  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7030/10008]  eta: 0:13:13  lr: 0.000001  loss: 6.8511 (6.8367)  time: 0.2641  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7040/10008]  eta: 0:13:11  lr: 0.000001  loss: 6.8041 (6.8366)  time: 0.2575  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7050/10008]  eta: 0:13:08  lr: 0.000001  loss: 6.8041 (6.8366)  time: 0.2643  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7060/10008]  eta: 0:13:05  lr: 0.000001  loss: 6.8358 (6.8366)  time: 0.2715  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7070/10008]  eta: 0:13:03  lr: 0.000001  loss: 6.8283 (6.8366)  time: 0.2728  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7080/10008]  eta: 0:13:00  lr: 0.000001  loss: 6.8223 (6.8365)  time: 0.2647  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7090/10008]  eta: 0:12:57  lr: 0.000001  loss: 6.8126 (6.8365)  time: 0.2519  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7100/10008]  eta: 0:12:55  lr: 0.000001  loss: 6.8072 (6.8365)  time: 0.2537  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7110/10008]  eta: 0:12:52  lr: 0.000001  loss: 6.8025 (6.8364)  time: 0.2534  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7120/10008]  eta: 0:12:49  lr: 0.000001  loss: 6.8243 (6.8364)  time: 0.2499  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7130/10008]  eta: 0:12:47  lr: 0.000001  loss: 6.8263 (6.8364)  time: 0.2624  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7140/10008]  eta: 0:12:44  lr: 0.000001  loss: 6.8265 (6.8364)  time: 0.2757  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7150/10008]  eta: 0:12:41  lr: 0.000001  loss: 6.8156 (6.8363)  time: 0.2750  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7160/10008]  eta: 0:12:39  lr: 0.000001  loss: 6.8285 (6.8363)  time: 0.2765  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7170/10008]  eta: 0:12:36  lr: 0.000001  loss: 6.8458 (6.8363)  time: 0.2832  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7180/10008]  eta: 0:12:33  lr: 0.000001  loss: 6.8291 (6.8363)  time: 0.2761  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7190/10008]  eta: 0:12:31  lr: 0.000001  loss: 6.8152 (6.8363)  time: 0.2598  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7200/10008]  eta: 0:12:28  lr: 0.000001  loss: 6.8002 (6.8362)  time: 0.2538  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7210/10008]  eta: 0:12:25  lr: 0.000001  loss: 6.8080 (6.8362)  time: 0.2534  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7220/10008]  eta: 0:12:23  lr: 0.000001  loss: 6.8079 (6.8362)  time: 0.2617  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7230/10008]  eta: 0:12:20  lr: 0.000001  loss: 6.7989 (6.8361)  time: 0.2708  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7240/10008]  eta: 0:12:17  lr: 0.000001  loss: 6.8088 (6.8361)  time: 0.2600  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7250/10008]  eta: 0:12:15  lr: 0.000001  loss: 6.8134 (6.8361)  time: 0.2519  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7260/10008]  eta: 0:12:12  lr: 0.000001  loss: 6.8282 (6.8360)  time: 0.2536  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7270/10008]  eta: 0:12:09  lr: 0.000001  loss: 6.8204 (6.8360)  time: 0.2528  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7280/10008]  eta: 0:12:06  lr: 0.000001  loss: 6.8052 (6.8360)  time: 0.2576  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7290/10008]  eta: 0:12:04  lr: 0.000001  loss: 6.8035 (6.8359)  time: 0.2688  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7300/10008]  eta: 0:12:01  lr: 0.000001  loss: 6.8174 (6.8359)  time: 0.2777  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7310/10008]  eta: 0:11:59  lr: 0.000001  loss: 6.8350 (6.8359)  time: 0.2785  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7320/10008]  eta: 0:11:56  lr: 0.000001  loss: 6.8261 (6.8359)  time: 0.2754  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7330/10008]  eta: 0:11:53  lr: 0.000001  loss: 6.8132 (6.8359)  time: 0.2748  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7340/10008]  eta: 0:11:51  lr: 0.000001  loss: 6.8056 (6.8358)  time: 0.2747  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7350/10008]  eta: 0:11:48  lr: 0.000001  loss: 6.8155 (6.8358)  time: 0.2757  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7360/10008]  eta: 0:11:45  lr: 0.000001  loss: 6.8361 (6.8358)  time: 0.2774  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7370/10008]  eta: 0:11:43  lr: 0.000001  loss: 6.8333 (6.8358)  time: 0.2780  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7380/10008]  eta: 0:11:40  lr: 0.000001  loss: 6.8235 (6.8358)  time: 0.2719  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7390/10008]  eta: 0:11:37  lr: 0.000001  loss: 6.8222 (6.8358)  time: 0.2576  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7400/10008]  eta: 0:11:35  lr: 0.000001  loss: 6.8183 (6.8357)  time: 0.2504  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7410/10008]  eta: 0:11:32  lr: 0.000001  loss: 6.8061 (6.8357)  time: 0.2493  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7420/10008]  eta: 0:11:29  lr: 0.000001  loss: 6.8092 (6.8357)  time: 0.2475  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7430/10008]  eta: 0:11:27  lr: 0.000001  loss: 6.8433 (6.8356)  time: 0.2523  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7440/10008]  eta: 0:11:24  lr: 0.000001  loss: 6.8168 (6.8356)  time: 0.2682  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7450/10008]  eta: 0:11:21  lr: 0.000001  loss: 6.8125 (6.8356)  time: 0.2793  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7460/10008]  eta: 0:11:19  lr: 0.000001  loss: 6.8008 (6.8356)  time: 0.2804  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7470/10008]  eta: 0:11:16  lr: 0.000001  loss: 6.8165 (6.8356)  time: 0.2852  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7480/10008]  eta: 0:11:13  lr: 0.000001  loss: 6.8186 (6.8355)  time: 0.2750  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7490/10008]  eta: 0:11:11  lr: 0.000001  loss: 6.8186 (6.8355)  time: 0.2563  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7500/10008]  eta: 0:11:08  lr: 0.000001  loss: 6.8206 (6.8355)  time: 0.2608  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7510/10008]  eta: 0:11:05  lr: 0.000001  loss: 6.8168 (6.8354)  time: 0.2676  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7520/10008]  eta: 0:11:03  lr: 0.000001  loss: 6.8108 (6.8354)  time: 0.2588  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7530/10008]  eta: 0:11:00  lr: 0.000001  loss: 6.8359 (6.8354)  time: 0.2516  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7540/10008]  eta: 0:10:57  lr: 0.000001  loss: 6.8310 (6.8354)  time: 0.2631  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7550/10008]  eta: 0:10:55  lr: 0.000001  loss: 6.8221 (6.8354)  time: 0.2732  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7560/10008]  eta: 0:10:52  lr: 0.000001  loss: 6.8172 (6.8354)  time: 0.2716  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7570/10008]  eta: 0:10:49  lr: 0.000001  loss: 6.8047 (6.8353)  time: 0.2752  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7580/10008]  eta: 0:10:47  lr: 0.000001  loss: 6.8277 (6.8353)  time: 0.2777  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7590/10008]  eta: 0:10:44  lr: 0.000001  loss: 6.8332 (6.8353)  time: 0.2757  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7600/10008]  eta: 0:10:41  lr: 0.000001  loss: 6.8104 (6.8353)  time: 0.2696  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7610/10008]  eta: 0:10:39  lr: 0.000001  loss: 6.8007 (6.8352)  time: 0.2658  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7620/10008]  eta: 0:10:36  lr: 0.000001  loss: 6.7878 (6.8352)  time: 0.2726  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7630/10008]  eta: 0:10:33  lr: 0.000001  loss: 6.8151 (6.8352)  time: 0.2802  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7640/10008]  eta: 0:10:31  lr: 0.000001  loss: 6.8403 (6.8352)  time: 0.2811  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7650/10008]  eta: 0:10:28  lr: 0.000001  loss: 6.8338 (6.8352)  time: 0.2779  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7660/10008]  eta: 0:10:26  lr: 0.000001  loss: 6.8342 (6.8352)  time: 0.2744  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7670/10008]  eta: 0:10:23  lr: 0.000001  loss: 6.8324 (6.8351)  time: 0.2617  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7680/10008]  eta: 0:10:20  lr: 0.000001  loss: 6.8109 (6.8351)  time: 0.2503  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7690/10008]  eta: 0:10:18  lr: 0.000001  loss: 6.8032 (6.8351)  time: 0.2672  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7700/10008]  eta: 0:10:15  lr: 0.000001  loss: 6.8046 (6.8351)  time: 0.2812  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7710/10008]  eta: 0:10:12  lr: 0.000001  loss: 6.8226 (6.8351)  time: 0.2692  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7720/10008]  eta: 0:10:09  lr: 0.000001  loss: 6.7930 (6.8350)  time: 0.2557  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7730/10008]  eta: 0:10:07  lr: 0.000001  loss: 6.7902 (6.8349)  time: 0.2514  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7740/10008]  eta: 0:10:04  lr: 0.000001  loss: 6.8076 (6.8349)  time: 0.2595  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7750/10008]  eta: 0:10:01  lr: 0.000001  loss: 6.7993 (6.8349)  time: 0.2700  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7760/10008]  eta: 0:09:59  lr: 0.000001  loss: 6.7913 (6.8348)  time: 0.2649  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7770/10008]  eta: 0:09:56  lr: 0.000001  loss: 6.8055 (6.8348)  time: 0.2662  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7780/10008]  eta: 0:09:54  lr: 0.000001  loss: 6.8055 (6.8348)  time: 0.2753  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7790/10008]  eta: 0:09:51  lr: 0.000001  loss: 6.8257 (6.8348)  time: 0.2687  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7800/10008]  eta: 0:09:48  lr: 0.000001  loss: 6.8257 (6.8347)  time: 0.2576  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7810/10008]  eta: 0:09:45  lr: 0.000001  loss: 6.7939 (6.8347)  time: 0.2545  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7820/10008]  eta: 0:09:43  lr: 0.000001  loss: 6.8088 (6.8346)  time: 0.2600  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7830/10008]  eta: 0:09:40  lr: 0.000001  loss: 6.8351 (6.8346)  time: 0.2639  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7840/10008]  eta: 0:09:37  lr: 0.000001  loss: 6.8326 (6.8346)  time: 0.2710  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7850/10008]  eta: 0:09:35  lr: 0.000001  loss: 6.8215 (6.8346)  time: 0.2775  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7860/10008]  eta: 0:09:32  lr: 0.000001  loss: 6.7944 (6.8345)  time: 0.2772  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7870/10008]  eta: 0:09:30  lr: 0.000001  loss: 6.7995 (6.8345)  time: 0.2762  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7880/10008]  eta: 0:09:27  lr: 0.000001  loss: 6.8235 (6.8345)  time: 0.2747  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7890/10008]  eta: 0:09:24  lr: 0.000001  loss: 6.8072 (6.8344)  time: 0.2711  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7900/10008]  eta: 0:09:22  lr: 0.000001  loss: 6.8049 (6.8344)  time: 0.2724  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7910/10008]  eta: 0:09:19  lr: 0.000001  loss: 6.8145 (6.8344)  time: 0.2781  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7920/10008]  eta: 0:09:16  lr: 0.000001  loss: 6.8126 (6.8344)  time: 0.2802  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7930/10008]  eta: 0:09:14  lr: 0.000001  loss: 6.8143 (6.8344)  time: 0.2643  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7940/10008]  eta: 0:09:11  lr: 0.000001  loss: 6.8399 (6.8343)  time: 0.2471  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7950/10008]  eta: 0:09:08  lr: 0.000001  loss: 6.8258 (6.8343)  time: 0.2510  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7960/10008]  eta: 0:09:05  lr: 0.000001  loss: 6.8162 (6.8342)  time: 0.2563  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7970/10008]  eta: 0:09:03  lr: 0.000001  loss: 6.8043 (6.8342)  time: 0.2552  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 7980/10008]  eta: 0:09:00  lr: 0.000001  loss: 6.8043 (6.8342)  time: 0.2517  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 7990/10008]  eta: 0:08:57  lr: 0.000001  loss: 6.8157 (6.8341)  time: 0.2511  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8000/10008]  eta: 0:08:55  lr: 0.000001  loss: 6.8157 (6.8341)  time: 0.2633  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8010/10008]  eta: 0:08:52  lr: 0.000001  loss: 6.7925 (6.8341)  time: 0.2706  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8020/10008]  eta: 0:08:49  lr: 0.000001  loss: 6.8083 (6.8341)  time: 0.2620  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8030/10008]  eta: 0:08:47  lr: 0.000001  loss: 6.8039 (6.8340)  time: 0.2552  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8040/10008]  eta: 0:08:44  lr: 0.000001  loss: 6.8012 (6.8340)  time: 0.2566  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8050/10008]  eta: 0:08:41  lr: 0.000001  loss: 6.8051 (6.8339)  time: 0.2700  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8060/10008]  eta: 0:08:39  lr: 0.000001  loss: 6.8115 (6.8339)  time: 0.2796  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8070/10008]  eta: 0:08:36  lr: 0.000001  loss: 6.8336 (6.8339)  time: 0.2790  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8080/10008]  eta: 0:08:33  lr: 0.000001  loss: 6.8110 (6.8339)  time: 0.2667  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8090/10008]  eta: 0:08:31  lr: 0.000001  loss: 6.8110 (6.8339)  time: 0.2687  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8100/10008]  eta: 0:08:28  lr: 0.000001  loss: 6.8238 (6.8339)  time: 0.2807  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8110/10008]  eta: 0:08:26  lr: 0.000001  loss: 6.8207 (6.8338)  time: 0.2774  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8120/10008]  eta: 0:08:23  lr: 0.000001  loss: 6.8267 (6.8338)  time: 0.2695  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8130/10008]  eta: 0:08:20  lr: 0.000001  loss: 6.8256 (6.8338)  time: 0.2584  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8140/10008]  eta: 0:08:17  lr: 0.000001  loss: 6.8202 (6.8338)  time: 0.2656  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8150/10008]  eta: 0:08:15  lr: 0.000001  loss: 6.8202 (6.8338)  time: 0.2779  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8160/10008]  eta: 0:08:12  lr: 0.000001  loss: 6.8081 (6.8337)  time: 0.2784  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8170/10008]  eta: 0:08:10  lr: 0.000001  loss: 6.7962 (6.8337)  time: 0.2752  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8180/10008]  eta: 0:08:07  lr: 0.000001  loss: 6.8050 (6.8337)  time: 0.2684  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8190/10008]  eta: 0:08:04  lr: 0.000001  loss: 6.8050 (6.8336)  time: 0.2606  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8200/10008]  eta: 0:08:02  lr: 0.000001  loss: 6.8110 (6.8336)  time: 0.2543  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 8210/10008]  eta: 0:07:59  lr: 0.000001  loss: 6.8141 (6.8336)  time: 0.2513  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8220/10008]  eta: 0:07:56  lr: 0.000001  loss: 6.7982 (6.8335)  time: 0.2623  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8230/10008]  eta: 0:07:54  lr: 0.000001  loss: 6.7986 (6.8335)  time: 0.2774  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8240/10008]  eta: 0:07:51  lr: 0.000001  loss: 6.8064 (6.8335)  time: 0.2806  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8250/10008]  eta: 0:07:48  lr: 0.000001  loss: 6.8064 (6.8334)  time: 0.2810  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8260/10008]  eta: 0:07:46  lr: 0.000001  loss: 6.8236 (6.8334)  time: 0.2803  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8270/10008]  eta: 0:07:43  lr: 0.000001  loss: 6.8427 (6.8334)  time: 0.2795  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8280/10008]  eta: 0:07:40  lr: 0.000001  loss: 6.8208 (6.8334)  time: 0.2790  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8290/10008]  eta: 0:07:38  lr: 0.000001  loss: 6.7890 (6.8334)  time: 0.2787  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8300/10008]  eta: 0:07:35  lr: 0.000001  loss: 6.8060 (6.8333)  time: 0.2810  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8310/10008]  eta: 0:07:32  lr: 0.000001  loss: 6.8078 (6.8333)  time: 0.2827  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8320/10008]  eta: 0:07:30  lr: 0.000001  loss: 6.8101 (6.8333)  time: 0.2808  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8330/10008]  eta: 0:07:27  lr: 0.000001  loss: 6.8151 (6.8333)  time: 0.2695  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8340/10008]  eta: 0:07:24  lr: 0.000001  loss: 6.7980 (6.8332)  time: 0.2569  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8350/10008]  eta: 0:07:22  lr: 0.000001  loss: 6.7885 (6.8332)  time: 0.2677  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8360/10008]  eta: 0:07:19  lr: 0.000001  loss: 6.8084 (6.8332)  time: 0.2703  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8370/10008]  eta: 0:07:16  lr: 0.000001  loss: 6.8145 (6.8331)  time: 0.2651  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8380/10008]  eta: 0:07:14  lr: 0.000001  loss: 6.8145 (6.8331)  time: 0.2704  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8390/10008]  eta: 0:07:11  lr: 0.000001  loss: 6.8178 (6.8331)  time: 0.2740  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8400/10008]  eta: 0:07:08  lr: 0.000001  loss: 6.8183 (6.8331)  time: 0.2691  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8410/10008]  eta: 0:07:06  lr: 0.000001  loss: 6.8200 (6.8330)  time: 0.2673  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8420/10008]  eta: 0:07:03  lr: 0.000001  loss: 6.8140 (6.8330)  time: 0.2677  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8430/10008]  eta: 0:07:00  lr: 0.000001  loss: 6.7954 (6.8329)  time: 0.2659  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8440/10008]  eta: 0:06:58  lr: 0.000001  loss: 6.7964 (6.8329)  time: 0.2727  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8450/10008]  eta: 0:06:55  lr: 0.000001  loss: 6.8262 (6.8329)  time: 0.2763  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8460/10008]  eta: 0:06:52  lr: 0.000001  loss: 6.8215 (6.8329)  time: 0.2726  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8470/10008]  eta: 0:06:50  lr: 0.000001  loss: 6.8133 (6.8329)  time: 0.2652  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8480/10008]  eta: 0:06:47  lr: 0.000001  loss: 6.8186 (6.8329)  time: 0.2621  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8490/10008]  eta: 0:06:44  lr: 0.000001  loss: 6.8015 (6.8328)  time: 0.2614  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8500/10008]  eta: 0:06:42  lr: 0.000001  loss: 6.8423 (6.8328)  time: 0.2617  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8510/10008]  eta: 0:06:39  lr: 0.000001  loss: 6.8422 (6.8328)  time: 0.2637  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8520/10008]  eta: 0:06:36  lr: 0.000001  loss: 6.8238 (6.8328)  time: 0.2596  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8530/10008]  eta: 0:06:34  lr: 0.000001  loss: 6.8238 (6.8328)  time: 0.2531  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8540/10008]  eta: 0:06:31  lr: 0.000001  loss: 6.8350 (6.8328)  time: 0.2522  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8550/10008]  eta: 0:06:28  lr: 0.000001  loss: 6.8226 (6.8328)  time: 0.2522  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8560/10008]  eta: 0:06:26  lr: 0.000001  loss: 6.8172 (6.8328)  time: 0.2521  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8570/10008]  eta: 0:06:23  lr: 0.000001  loss: 6.8229 (6.8328)  time: 0.2561  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8580/10008]  eta: 0:06:20  lr: 0.000001  loss: 6.8174 (6.8327)  time: 0.2601  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 8590/10008]  eta: 0:06:18  lr: 0.000001  loss: 6.8264 (6.8327)  time: 0.2540  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8600/10008]  eta: 0:06:15  lr: 0.000001  loss: 6.8324 (6.8327)  time: 0.2482  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8610/10008]  eta: 0:06:12  lr: 0.000001  loss: 6.8187 (6.8327)  time: 0.2478  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8620/10008]  eta: 0:06:10  lr: 0.000001  loss: 6.8164 (6.8326)  time: 0.2506  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 8630/10008]  eta: 0:06:07  lr: 0.000001  loss: 6.8102 (6.8326)  time: 0.2631  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8640/10008]  eta: 0:06:04  lr: 0.000001  loss: 6.7996 (6.8326)  time: 0.2673  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8650/10008]  eta: 0:06:01  lr: 0.000001  loss: 6.8175 (6.8326)  time: 0.2569  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8660/10008]  eta: 0:05:59  lr: 0.000001  loss: 6.8181 (6.8326)  time: 0.2506  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8670/10008]  eta: 0:05:56  lr: 0.000001  loss: 6.8159 (6.8325)  time: 0.2498  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8680/10008]  eta: 0:05:53  lr: 0.000001  loss: 6.8069 (6.8325)  time: 0.2493  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8690/10008]  eta: 0:05:51  lr: 0.000001  loss: 6.8118 (6.8324)  time: 0.2491  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8700/10008]  eta: 0:05:48  lr: 0.000001  loss: 6.8118 (6.8324)  time: 0.2542  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8710/10008]  eta: 0:05:45  lr: 0.000001  loss: 6.8029 (6.8324)  time: 0.2680  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8720/10008]  eta: 0:05:43  lr: 0.000001  loss: 6.7986 (6.8324)  time: 0.2771  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8730/10008]  eta: 0:05:40  lr: 0.000001  loss: 6.8180 (6.8324)  time: 0.2706  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8740/10008]  eta: 0:05:37  lr: 0.000001  loss: 6.8182 (6.8323)  time: 0.2640  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8750/10008]  eta: 0:05:35  lr: 0.000001  loss: 6.8365 (6.8323)  time: 0.2688  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8760/10008]  eta: 0:05:32  lr: 0.000001  loss: 6.8318 (6.8323)  time: 0.2622  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8770/10008]  eta: 0:05:29  lr: 0.000001  loss: 6.8206 (6.8323)  time: 0.2538  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8780/10008]  eta: 0:05:27  lr: 0.000001  loss: 6.8387 (6.8323)  time: 0.2657  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8790/10008]  eta: 0:05:24  lr: 0.000001  loss: 6.8271 (6.8323)  time: 0.2758  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8800/10008]  eta: 0:05:21  lr: 0.000001  loss: 6.7980 (6.8322)  time: 0.2727  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8810/10008]  eta: 0:05:19  lr: 0.000001  loss: 6.7960 (6.8322)  time: 0.2586  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8820/10008]  eta: 0:05:16  lr: 0.000001  loss: 6.8067 (6.8322)  time: 0.2498  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 8830/10008]  eta: 0:05:13  lr: 0.000001  loss: 6.8102 (6.8322)  time: 0.2508  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8840/10008]  eta: 0:05:11  lr: 0.000001  loss: 6.8363 (6.8322)  time: 0.2516  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8850/10008]  eta: 0:05:08  lr: 0.000001  loss: 6.8429 (6.8322)  time: 0.2520  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8860/10008]  eta: 0:05:05  lr: 0.000001  loss: 6.8295 (6.8321)  time: 0.2509  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8870/10008]  eta: 0:05:03  lr: 0.000001  loss: 6.8101 (6.8321)  time: 0.2498  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8880/10008]  eta: 0:05:00  lr: 0.000001  loss: 6.8101 (6.8321)  time: 0.2531  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8890/10008]  eta: 0:04:57  lr: 0.000001  loss: 6.7841 (6.8320)  time: 0.2529  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8900/10008]  eta: 0:04:55  lr: 0.000001  loss: 6.8052 (6.8320)  time: 0.2494  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8910/10008]  eta: 0:04:52  lr: 0.000001  loss: 6.8056 (6.8320)  time: 0.2522  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8920/10008]  eta: 0:04:49  lr: 0.000001  loss: 6.8228 (6.8320)  time: 0.2646  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8930/10008]  eta: 0:04:47  lr: 0.000001  loss: 6.8338 (6.8319)  time: 0.2757  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8940/10008]  eta: 0:04:44  lr: 0.000001  loss: 6.8338 (6.8319)  time: 0.2742  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8950/10008]  eta: 0:04:41  lr: 0.000001  loss: 6.8372 (6.8319)  time: 0.2766  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8960/10008]  eta: 0:04:39  lr: 0.000001  loss: 6.8010 (6.8319)  time: 0.2766  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8970/10008]  eta: 0:04:36  lr: 0.000001  loss: 6.8240 (6.8319)  time: 0.2615  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 8980/10008]  eta: 0:04:33  lr: 0.000001  loss: 6.8021 (6.8318)  time: 0.2538  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 8990/10008]  eta: 0:04:31  lr: 0.000001  loss: 6.7826 (6.8318)  time: 0.2518  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9000/10008]  eta: 0:04:28  lr: 0.000001  loss: 6.8033 (6.8318)  time: 0.2480  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9010/10008]  eta: 0:04:25  lr: 0.000001  loss: 6.7915 (6.8317)  time: 0.2500  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 9020/10008]  eta: 0:04:23  lr: 0.000001  loss: 6.8128 (6.8317)  time: 0.2501  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 9030/10008]  eta: 0:04:20  lr: 0.000001  loss: 6.8128 (6.8317)  time: 0.2470  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9040/10008]  eta: 0:04:17  lr: 0.000001  loss: 6.7966 (6.8317)  time: 0.2612  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9050/10008]  eta: 0:04:15  lr: 0.000001  loss: 6.7976 (6.8316)  time: 0.2783  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 9060/10008]  eta: 0:04:12  lr: 0.000001  loss: 6.8222 (6.8316)  time: 0.2766  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9070/10008]  eta: 0:04:09  lr: 0.000001  loss: 6.8203 (6.8316)  time: 0.2702  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9080/10008]  eta: 0:04:07  lr: 0.000001  loss: 6.7960 (6.8316)  time: 0.2618  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9090/10008]  eta: 0:04:04  lr: 0.000001  loss: 6.8006 (6.8315)  time: 0.2626  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9100/10008]  eta: 0:04:01  lr: 0.000001  loss: 6.8091 (6.8315)  time: 0.2607  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9110/10008]  eta: 0:03:59  lr: 0.000001  loss: 6.8281 (6.8315)  time: 0.2580  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9120/10008]  eta: 0:03:56  lr: 0.000001  loss: 6.8249 (6.8315)  time: 0.2702  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9130/10008]  eta: 0:03:53  lr: 0.000001  loss: 6.8016 (6.8315)  time: 0.2766  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9140/10008]  eta: 0:03:51  lr: 0.000001  loss: 6.8316 (6.8315)  time: 0.2776  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9150/10008]  eta: 0:03:48  lr: 0.000001  loss: 6.8192 (6.8314)  time: 0.2719  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9160/10008]  eta: 0:03:45  lr: 0.000001  loss: 6.7802 (6.8314)  time: 0.2553  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9170/10008]  eta: 0:03:43  lr: 0.000001  loss: 6.8062 (6.8314)  time: 0.2496  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9180/10008]  eta: 0:03:40  lr: 0.000001  loss: 6.8059 (6.8313)  time: 0.2540  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9190/10008]  eta: 0:03:37  lr: 0.000001  loss: 6.7930 (6.8313)  time: 0.3342  data: 0.0699  max mem: 11329
+Epoch: [1]  [ 9200/10008]  eta: 0:03:35  lr: 0.000001  loss: 6.7983 (6.8313)  time: 0.3422  data: 0.0699  max mem: 11329
+Epoch: [1]  [ 9210/10008]  eta: 0:03:32  lr: 0.000001  loss: 6.8153 (6.8313)  time: 0.2777  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9220/10008]  eta: 0:03:29  lr: 0.000001  loss: 6.8131 (6.8313)  time: 0.2799  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9230/10008]  eta: 0:03:27  lr: 0.000001  loss: 6.8118 (6.8312)  time: 0.2741  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9240/10008]  eta: 0:03:24  lr: 0.000001  loss: 6.8252 (6.8312)  time: 0.2615  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9250/10008]  eta: 0:03:21  lr: 0.000001  loss: 6.7976 (6.8312)  time: 0.2495  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9260/10008]  eta: 0:03:19  lr: 0.000001  loss: 6.7976 (6.8312)  time: 0.2493  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9270/10008]  eta: 0:03:16  lr: 0.000001  loss: 6.8074 (6.8312)  time: 0.2629  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9280/10008]  eta: 0:03:13  lr: 0.000001  loss: 6.8110 (6.8312)  time: 0.2638  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9290/10008]  eta: 0:03:11  lr: 0.000001  loss: 6.8315 (6.8312)  time: 0.2494  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9300/10008]  eta: 0:03:08  lr: 0.000001  loss: 6.8287 (6.8311)  time: 0.2584  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9310/10008]  eta: 0:03:05  lr: 0.000001  loss: 6.8190 (6.8311)  time: 0.2739  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9320/10008]  eta: 0:03:03  lr: 0.000001  loss: 6.8190 (6.8311)  time: 0.2780  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9330/10008]  eta: 0:03:00  lr: 0.000001  loss: 6.8163 (6.8311)  time: 0.2840  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9340/10008]  eta: 0:02:57  lr: 0.000001  loss: 6.8060 (6.8311)  time: 0.2853  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9350/10008]  eta: 0:02:55  lr: 0.000001  loss: 6.7839 (6.8310)  time: 0.2780  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9360/10008]  eta: 0:02:52  lr: 0.000001  loss: 6.7998 (6.8310)  time: 0.2758  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9370/10008]  eta: 0:02:49  lr: 0.000001  loss: 6.8243 (6.8310)  time: 0.2772  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9380/10008]  eta: 0:02:47  lr: 0.000001  loss: 6.8159 (6.8309)  time: 0.2779  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9390/10008]  eta: 0:02:44  lr: 0.000001  loss: 6.7806 (6.8309)  time: 0.2767  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9400/10008]  eta: 0:02:42  lr: 0.000001  loss: 6.8056 (6.8309)  time: 0.2756  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9410/10008]  eta: 0:02:39  lr: 0.000001  loss: 6.8131 (6.8308)  time: 0.2744  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9420/10008]  eta: 0:02:36  lr: 0.000001  loss: 6.8202 (6.8308)  time: 0.2655  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9430/10008]  eta: 0:02:34  lr: 0.000001  loss: 6.8183 (6.8308)  time: 0.2603  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9440/10008]  eta: 0:02:31  lr: 0.000001  loss: 6.7960 (6.8308)  time: 0.2715  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9450/10008]  eta: 0:02:28  lr: 0.000001  loss: 6.7997 (6.8307)  time: 0.2800  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9460/10008]  eta: 0:02:26  lr: 0.000001  loss: 6.8201 (6.8307)  time: 0.2780  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9470/10008]  eta: 0:02:23  lr: 0.000001  loss: 6.8334 (6.8307)  time: 0.2753  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9480/10008]  eta: 0:02:20  lr: 0.000001  loss: 6.8156 (6.8307)  time: 0.2739  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9490/10008]  eta: 0:02:18  lr: 0.000001  loss: 6.8006 (6.8307)  time: 0.2741  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9500/10008]  eta: 0:02:15  lr: 0.000001  loss: 6.8068 (6.8307)  time: 0.2719  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9510/10008]  eta: 0:02:12  lr: 0.000001  loss: 6.7982 (6.8306)  time: 0.2625  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9520/10008]  eta: 0:02:10  lr: 0.000001  loss: 6.7844 (6.8306)  time: 0.2659  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9530/10008]  eta: 0:02:07  lr: 0.000001  loss: 6.7864 (6.8306)  time: 0.2755  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9540/10008]  eta: 0:02:04  lr: 0.000001  loss: 6.8083 (6.8306)  time: 0.2662  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9550/10008]  eta: 0:02:02  lr: 0.000001  loss: 6.8154 (6.8306)  time: 0.2523  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9560/10008]  eta: 0:01:59  lr: 0.000001  loss: 6.8182 (6.8305)  time: 0.2536  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9570/10008]  eta: 0:01:56  lr: 0.000001  loss: 6.8182 (6.8305)  time: 0.2575  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9580/10008]  eta: 0:01:54  lr: 0.000001  loss: 6.8177 (6.8305)  time: 0.2740  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9590/10008]  eta: 0:01:51  lr: 0.000001  loss: 6.8059 (6.8305)  time: 0.2852  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9600/10008]  eta: 0:01:48  lr: 0.000001  loss: 6.7870 (6.8304)  time: 0.2654  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9610/10008]  eta: 0:01:46  lr: 0.000001  loss: 6.7882 (6.8304)  time: 0.2582  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9620/10008]  eta: 0:01:43  lr: 0.000001  loss: 6.8229 (6.8304)  time: 0.2617  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9630/10008]  eta: 0:01:40  lr: 0.000001  loss: 6.8284 (6.8304)  time: 0.2605  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9640/10008]  eta: 0:01:38  lr: 0.000001  loss: 6.8193 (6.8303)  time: 0.2668  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9650/10008]  eta: 0:01:35  lr: 0.000001  loss: 6.7857 (6.8303)  time: 0.2671  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9660/10008]  eta: 0:01:32  lr: 0.000001  loss: 6.7990 (6.8303)  time: 0.2565  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 9670/10008]  eta: 0:01:30  lr: 0.000001  loss: 6.8475 (6.8303)  time: 0.2502  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9680/10008]  eta: 0:01:27  lr: 0.000001  loss: 6.8346 (6.8303)  time: 0.2493  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9690/10008]  eta: 0:01:24  lr: 0.000001  loss: 6.8121 (6.8302)  time: 0.2592  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9700/10008]  eta: 0:01:22  lr: 0.000001  loss: 6.8121 (6.8302)  time: 0.2650  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9710/10008]  eta: 0:01:19  lr: 0.000001  loss: 6.8198 (6.8302)  time: 0.2582  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9720/10008]  eta: 0:01:16  lr: 0.000001  loss: 6.8093 (6.8302)  time: 0.2517  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9730/10008]  eta: 0:01:14  lr: 0.000001  loss: 6.8117 (6.8302)  time: 0.2539  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9740/10008]  eta: 0:01:11  lr: 0.000001  loss: 6.8140 (6.8302)  time: 0.2598  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9750/10008]  eta: 0:01:08  lr: 0.000001  loss: 6.8140 (6.8301)  time: 0.2561  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9760/10008]  eta: 0:01:06  lr: 0.000001  loss: 6.8069 (6.8301)  time: 0.2675  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9770/10008]  eta: 0:01:03  lr: 0.000001  loss: 6.7967 (6.8301)  time: 0.2786  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9780/10008]  eta: 0:01:00  lr: 0.000001  loss: 6.8016 (6.8300)  time: 0.2673  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9790/10008]  eta: 0:00:58  lr: 0.000001  loss: 6.8115 (6.8300)  time: 0.2689  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9800/10008]  eta: 0:00:55  lr: 0.000001  loss: 6.8058 (6.8300)  time: 0.2777  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9810/10008]  eta: 0:00:52  lr: 0.000001  loss: 6.7984 (6.8300)  time: 0.2677  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9820/10008]  eta: 0:00:50  lr: 0.000001  loss: 6.7955 (6.8299)  time: 0.2559  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 9830/10008]  eta: 0:00:47  lr: 0.000001  loss: 6.7955 (6.8299)  time: 0.2553  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9840/10008]  eta: 0:00:44  lr: 0.000001  loss: 6.7986 (6.8299)  time: 0.2662  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 9850/10008]  eta: 0:00:42  lr: 0.000001  loss: 6.7871 (6.8298)  time: 0.2769  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9860/10008]  eta: 0:00:39  lr: 0.000001  loss: 6.7963 (6.8298)  time: 0.2765  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9870/10008]  eta: 0:00:36  lr: 0.000001  loss: 6.8016 (6.8298)  time: 0.2753  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9880/10008]  eta: 0:00:34  lr: 0.000001  loss: 6.8078 (6.8298)  time: 0.2642  data: 0.0001  max mem: 11329
+Epoch: [1]  [ 9890/10008]  eta: 0:00:31  lr: 0.000001  loss: 6.8202 (6.8297)  time: 0.2521  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9900/10008]  eta: 0:00:28  lr: 0.000001  loss: 6.8247 (6.8297)  time: 0.2647  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9910/10008]  eta: 0:00:26  lr: 0.000001  loss: 6.8251 (6.8297)  time: 0.2856  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9920/10008]  eta: 0:00:23  lr: 0.000001  loss: 6.8133 (6.8297)  time: 0.2860  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9930/10008]  eta: 0:00:20  lr: 0.000001  loss: 6.8120 (6.8297)  time: 0.2659  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9940/10008]  eta: 0:00:18  lr: 0.000001  loss: 6.8270 (6.8297)  time: 0.2527  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9950/10008]  eta: 0:00:15  lr: 0.000001  loss: 6.8291 (6.8297)  time: 0.2500  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9960/10008]  eta: 0:00:12  lr: 0.000001  loss: 6.8301 (6.8297)  time: 0.2576  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9970/10008]  eta: 0:00:10  lr: 0.000001  loss: 6.8175 (6.8296)  time: 0.2733  data: 0.0002  max mem: 11329
+Epoch: [1]  [ 9980/10008]  eta: 0:00:07  lr: 0.000001  loss: 6.8036 (6.8296)  time: 0.2777  data: 0.0003  max mem: 11329
+Epoch: [1]  [ 9990/10008]  eta: 0:00:04  lr: 0.000001  loss: 6.8036 (6.8296)  time: 0.2670  data: 0.0002  max mem: 11329
+Epoch: [1]  [10000/10008]  eta: 0:00:02  lr: 0.000001  loss: 6.7921 (6.8295)  time: 0.2497  data: 0.0001  max mem: 11329
+Epoch: [1]  [10007/10008]  eta: 0:00:00  lr: 0.000001  loss: 6.8116 (6.8295)  time: 0.2421  data: 0.0001  max mem: 11329
+Epoch: [1] Total time: 0:44:26 (0.2665 s / it)
+Averaged stats: lr: 0.000001  loss: 6.8116 (6.8294)
+Test:  [   0/1563]  eta: 0:44:43  loss: 6.9790 (6.9790)  acc1: 0.0000 (0.0000)  acc5: 0.0000 (0.0000)  time: 1.7171  data: 0.9591  max mem: 11329
+Test:  [  10/1563]  eta: 0:05:03  loss: 6.9790 (6.9732)  acc1: 0.0000 (0.2841)  acc5: 0.0000 (0.8523)  time: 0.1954  data: 0.0874  max mem: 11329
