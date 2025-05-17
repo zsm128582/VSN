@@ -7,7 +7,7 @@ from typing import Tuple
 from timm.models.layers import DropPath, trunc_normal_
 # from localAttentionFunction import LocalAttention
 from swattentionFunction import sw_qk_cuda , sw_av_cuda
-from NewSparse import gatherAttention , AttentionWeighting
+# from NewSparse import gatherAttention , AttentionWeighting
 # from sparseAttentionFunction import gatherAttention , AttentionWeighting
 # from cudaGatherFunction import GatherFunction
 # import sparse_attention_cuda
@@ -696,8 +696,10 @@ def VSN(arg):
         depths=[3, 4, 18, 4],
         patch_sizes=[8,4,2 , 1],
         window_sizes=[7,5,3 , 1],
-        num_select=[12,12,12,12],
-        num_heads=[4,4,8,8],
+        # num_select=[12,12,12,12],
+        num_select=[1,4,16,-1],
+        # num_heads=[4,4,8,8],
+        num_heads=[2,4,8,16],#保证每个头32维度
         mlp_ratios=[3, 3, 3, 3],
         drop_path_rate=0.15,
         projection=1024,
@@ -705,6 +707,26 @@ def VSN(arg):
     )
     model.default_cfg = _cfg()
     return model
+    
+@register_model
+def VSN_Tiny(arg):
+    model = SparseNet(
+        embed_dims=[64, 128, 256, 512],
+        depths=[2,2,8,2],
+        patch_sizes=[8,4,2 , 1],
+        window_sizes=[7,5,3 , 1],
+        # num_select=[12,12,12,12],
+        num_select=[1,4,16,-1],
+        # num_heads=[4,4,8,8],
+        num_heads=[2,4,8,16],#保证每个头32维度
+        mlp_ratios=[3, 3, 3, 3],
+        drop_path_rate=0.15,
+        projection=1024,
+        isSparse=[True,True,True,False]
+    )
+    model.default_cfg = _cfg()
+    return model
+
 
 # 示例测试
 if __name__ == "__main__":

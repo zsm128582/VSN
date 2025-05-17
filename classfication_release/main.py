@@ -30,7 +30,7 @@ from RMT import RMT_T3, RMT_S, RMT_M2, RMT_L6
 from Restore import Restormer_default
 from Utentive import Utentive_default
 from HalfRestore import HalfRestomer_defalt
-from SpaseNet import VSN
+from SpaseNet import VSN,VSN_Tiny
 
 archs = {
             'RMT_T': RMT_T3,
@@ -41,6 +41,7 @@ archs = {
             'Utentive' : Utentive_default,
             'Half' : HalfRestomer_defalt,
             'VSN' : VSN,
+            'VSN_Tiny' : VSN_Tiny
          }
 
 
